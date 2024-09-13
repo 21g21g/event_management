@@ -1,3 +1,0 @@
-[submodule "backend"]
-	path = backend
-	url = git@github.com:21g21g/eventback.git
