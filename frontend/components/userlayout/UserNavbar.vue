@@ -33,9 +33,10 @@
             <NuxtLink to="/user/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
               Profile
             </NuxtLink>
-            <NuxtLink to="/auth/login" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+            <button @click="clickLogout"
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
               Logout
-            </NuxtLink>
+            </button>
             <NuxtLink to="/help" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
               Help
             </NuxtLink>
@@ -76,13 +77,13 @@
               >
                 Profile
               </NuxtLink>
-              <NuxtLink
-                to="/auth/login"
+              <button
+                @click="clickLogout"
                 exact
                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
               >
                 Logout
-              </NuxtLink>
+              </button>
               <NuxtLink
                 to="/help"
                 exact
@@ -107,6 +108,8 @@ import { useAuthStore } from "../../stores/authstore";
 import { useQuery } from "@vue/apollo-composable";
 import gql from 'graphql-tag';
 import {GET_USER_BY_ID} from "../graphql/queries"
+import { useRouter } from 'vue-router';
+const router=useRouter()
 const authStore = useAuthStore();
 const onhover = ref(false);
 const isMobileMenuOpen = ref(false);
@@ -128,6 +131,13 @@ const userData = computed(() => {
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
+
+const clickLogout=()=>{
+  console.log("the user clicked the logout button")
+  localStorage.removeItem("token")
+  router.push("/")
+  
+}
 </script>
 <style scoped>
 .router-link-exact-active{

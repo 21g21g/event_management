@@ -114,7 +114,17 @@ const onSubmit = async () => {
           user.value.email = "";
           user.value.password = "";
 
-          router.push("/user");
+    const redirectPath = localStorage.getItem('redirectAfterLogin');
+  if (redirectPath) {
+    // Remove redirect path from localStorage
+    localStorage.removeItem('redirectAfterLogin');
+    // Redirect to the saved path
+    router.push(redirectPath);
+  } else {
+    // Default behavior after login, e.g., dashboard or home
+ router.push("/user");  }
+
+         
         }
   } catch (error) {
     errorMessage.value = "Login failed. Please check your credentials.";

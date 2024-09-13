@@ -48,6 +48,9 @@
       </button>
       <p class="font-semibold p-3 text-left">Do You have an account?<NuxtLink to="/auth/login" class="text-blue-600">Login</NuxtLink></p>
     </Form>
+    <div v-if="sucessMessage" class="text-green-600">
+      {{sucessMessage}}
+    </div>
   </div>
 </template>
 
@@ -59,7 +62,8 @@ import { ref } from 'vue';
 import Eye from "../../assets/icons/Eye.vue";
 import { useMutation } from '@vue/apollo-composable';
 import gql from 'graphql-tag';
-
+import { useRouter } from 'vue-router';
+const router=useRouter()
 const REGISTER_USER_MUTATION = gql`
   mutation Register($email: String!, $password: String!, $username: String!) {
     signUp(email: $email, password: $password, username: $username) {
@@ -77,7 +81,7 @@ const userData = ref({
 });
 
 const togglePassword = ref(false);
-
+const sucessMessage=ref("")
 const showPassword = () => {
   togglePassword.value = !togglePassword.value;
 };
@@ -93,13 +97,20 @@ const signupRegister = async () => {
         username: userData.value.username,
     
     });
-
     console.log('Mutation response:', data);
     if (data && data.signUp) {
+      
+      sucessMessage.value=data.signUp.message
       console.log('Registration response:', data.signUp.message);
+      userData.value.email="",
+      userData.value.password="",
+      userData.value.username=""
     } else {
       console.error('No response from server');
     }
+  //  router.push("/auth/login")
+  
+
   } catch (error) {
     console.error('Registration error:', error);
   }

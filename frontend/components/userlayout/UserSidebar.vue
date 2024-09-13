@@ -2,7 +2,8 @@
 <div class="w-28 min-h-screen mt-20  ">  
         <div class="flex hover:bg-amber-600 gap-2 cursor-pointer" @click="userhomeClick">
             <Home/>
-        <span class="text-black">Home</span> </div>
+        <span class="text-black">Home</span>
+         </div>
       
       
 </div>

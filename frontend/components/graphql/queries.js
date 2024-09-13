@@ -125,7 +125,7 @@ mutation EventUpdate(
   $specificPrice: numeric,
   $preparationDate: date,
   $category: String,
-  $tags: [String!],
+  $tags: [String],
  
 ) {
   update_events(
@@ -234,6 +234,7 @@ query{
     venue
     price
     specific_price
+    preparation_date
     featured_image
     category
     tags
@@ -245,3 +246,74 @@ query{
   }
 }
 `;
+export const GET_EVENT_BY_CATEGORY=gql`
+query getEvent($category:String!){
+  events(where:{category:{_eq:$category}}){
+    id
+    title
+    description
+    price
+    address
+    venue
+    specific_price
+    featured_image
+    category
+    tags
+    preparation_date
+  }
+}`;
+
+export const GET_EVENT_BY_ID=gql`
+query getEventById($id:uuid!){
+  events_by_pk(id:$id){
+      id
+    title
+    description
+    address
+    venue
+    price
+    specific_price
+    featured_image
+    imagestores{
+      id
+      url
+      event_id
+    }
+    category
+    preparation_date
+    tags
+    
+  }
+}`;
+
+export const USER_MAKE_BOOK_MARK=gql`
+mutation bookMark($user_id: uuid!, $event_id: uuid!) {
+  insert_bookmarks_one(object: {user_id:$user_id,event_id:$event_id}){
+    id
+    
+  }
+}
+
+`;
+
+export const GET_BOOK_MARK_BY_USER_ID=gql`
+query getBookMark($user_id:uuid!){
+  bookmarks(where:{user_id:{_eq:$user_id}}){
+    id
+    event{
+      id
+      title
+      description
+      address
+      venue
+      specific_price
+      tags
+      category
+      featured_image
+      price
+      preparation_date
+      
+    }
+    
+  }
+}`;

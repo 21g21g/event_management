@@ -13,6 +13,8 @@ export default defineNuxtConfig({
   
   ],
   
+   
+  
   vuetify: {
     moduleOptions: {
       /* module specific options */
@@ -22,12 +24,16 @@ export default defineNuxtConfig({
     }
   },
   vite: {
-    plugins: [
-      require('vite-plugin-vue-inspector')({
-        toggleButtonVisibility: 'always', // Example option
-      }),
-    ],
+  
+    server:{
+        hmr:true,
+      
+        
+        
+    },
+   
   },
   
+  ssr:true
   
   })

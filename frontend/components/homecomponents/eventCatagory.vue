@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-gray-100 min-h-screen">
-    <h1 class="font-bold text-3xl p-4">Explore Event By Category</h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-4">
-      <h1 v-if="loading">Loading...</h1>
-      <h1 v-else-if="error">There is an error</h1>
-      <div 
+          <div class="bg-gray-100">
+        <h1 class="font-bold text-3xl p-4">Explore Event By Category</h1>
+       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 p-4">
+         <h1 v-if="loading">Loading...</h1>
+        <h1 v-else-if="error">{{ error.message }}</h1>     
+        <div 
         v-else 
         v-for="event in uniqueCategories" 
         :key="event.category"
@@ -57,6 +57,12 @@ const getCoverImage = (category) => coverImages[category] || '';
 
 // Unique categories
 const uniqueCategories = computed(() => {
+  if(loading.value){
+   return []
+}else if(error.value){
+  return []
+}
+else{
   const events = result.value?.events || [];
   if (!events.length) return [];
   return [
@@ -67,8 +73,21 @@ const uniqueCategories = computed(() => {
       ])
     ).values()
   ];
+}
+  
 });
+const handleClickShow = (category, image) => {
+  router.push({
+    path: '/catagoryDetail',
+    query: {
+      category,
+      image
+    }
+  });
+};
+
 const fetchLatestEvents = async () => {
+  if (loading.value) return; 
   try {
     await refetch();
   } catch (err) {
@@ -76,17 +95,9 @@ const fetchLatestEvents = async () => {
   }
 };
 
-// Handle category click
-const handleClickShow = (category, image) => {
-  router.push({
-    path: '/categoryDetail',
-    query: {
-      category,
-      image
-    }
-  });
-};
 onMounted(() => {
   fetchLatestEvents();
 });
+// Handle category click
+
 </script>

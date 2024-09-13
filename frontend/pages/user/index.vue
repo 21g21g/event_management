@@ -148,11 +148,11 @@
             name="category"
             class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
           >
-            <option value="food">Food</option>
-            <option value="tech">Tech</option>
-            <option value="education">Education</option>
-            <option value="entertainment">Entertainment</option>
-            <option value="sport">Sport</option>
+            <option value="Food">Food</option>
+            <option value="Tech">Tech</option>
+            <option value="Education">Education</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Sport">Sport</option>
           </select>
         </div>
 
@@ -224,7 +224,7 @@ const handleEdit = (item) => {
     venue: item.venue,
     address: item.address,
     price: item.price === "paid" ? "paid" : "free",
-    specificPrice: item.price === "paid" ? item.specific_price : "",
+    specificPrice: item.price === "paid" ? item.specific_price : null,
     preparationDate: item.preparation_date,
     category: item.category,
     tags: item.tags,
@@ -238,7 +238,7 @@ const handleCancel = () => {
 
 const handleDelete = async(id) => {
   try{
-        const response=await deleteEvent({id:String(id)||null})
+        const response=await deleteEvent({id:String(id)})
         console.log("you delete succesfully")
         await refetch()
 
@@ -254,14 +254,22 @@ const onSubmit = async (id) => {
   try {
     const response = await updateEvent({
       id: String(id)||null,  
-      ...formData.value
+     title: formData.value.title || null,
+        description: formData.value.description || null,
+        venue: formData.value.venue || null,
+        address: formData.value.address || null,
+        price: formData.value.price || 'free',
+        specificPrice: formData.value.price === 'paid' ? formData.value.specificPrice: 0,
+        preparationDate: formData.value.preparationDate || null,
+        category: formData.value.category || null,
+        tags:formData.value.tags
     });
       show.value = false;
 
 
     console.log('Event updated successfully:', response.data.update_events.returning);
   } catch (error) {
-    console.error('Error updating event:', error);
+    console.log('Error updating event:', error);
   }
 };
 </script>

@@ -132,14 +132,17 @@ import { useAuthStore } from '../../stores/authstore';
 import imageupload from "./imageupload.vue"
 import {insert_event_mutation} from "../../components/graphql/queries"
 import {GET_USER_BY_HIS_ID} from "../../components/graphql/queries"
+import {insert_image_imageTable} from "../../components/graphql/queries"
 import gql from 'graphql-tag';
+import { useRouter } from 'vue-router';
+const router=useRouter()
 const authStore = useAuthStore();
 const userid = ref(authStore.userId);
 definePageMeta({
   layout: 'user'
 });
 const { result, loading, error ,refetch} = useQuery(GET_USER_BY_HIS_ID, { id: userid.value });
-
+const {mutate:insertImage}=useMutation(insert_image_imageTable)
 const formData = ref({
   title: '',
   description: '',
@@ -197,10 +200,19 @@ const onSubmit = async (values) => {
       tags: values.tags,
       user_id: userid.value
     });
+     const eventId = ref(response.data.insert_events.returning[0].id);
+     const imagePromises = imageUrls.value.map(url => 
+      insertImage({
+        url: url,
+        event_id: String(eventId.value)
+      })
+    );
 
-    const eventId = response.data.insert_events.returning[0].id;
+    await Promise.all(imagePromises);
+
     alert('Event created successfully!');
     await refetch()
+    router.push("/user")
     console.log('Event ID:', eventId);
   } catch (err) {
     console.error('Error creating event:', err);
