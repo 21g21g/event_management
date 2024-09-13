@@ -1,0 +1,83 @@
+type Mutation {
+  siginUser(
+    email: String!
+    password: String!
+  ): Signoutput
+}
+
+type Mutation {
+  signUp(
+    email: String!
+    username: String!
+    password: String!
+  ): signUpOut
+}
+
+type Mutation {
+  uploadBase64Image(
+    base64_str: String!
+  ): ImageResponse
+}
+
+type Mutation {
+  uploadImages(
+    images: [String!]!
+  ): ImageUploadResponse!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input RegisterUserInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+type RegisterOutpt {
+  username: String!
+}
+
+type LoginOutput {
+  token: String!
+}
+
+type RegisterOutput {
+  username: String
+}
+
+type UploadResponse {
+  url: String!
+}
+
+type LoginResponse {
+  token: String!
+}
+
+type userOut {
+  username: String!
+}
+
+type signUpOut {
+  message: String!
+}
+
+type Signoutput {
+  token: String!
+}
+
+type ImageUploadResponse {
+  urls: [String!]
+}
+
+type ImageResponse {
+  url: String!
+}
+

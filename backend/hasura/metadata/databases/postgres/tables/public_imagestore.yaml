@@ -1,0 +1,40 @@
+table:
+  name: imagestore
+  schema: public
+object_relationships:
+  - name: event
+    using:
+      foreign_key_constraint_on: event_id
+insert_permissions:
+  - role: anonymous
+    permission:
+      check: {}
+      columns:
+        - url
+        - event_id
+        - id
+    comment: ""
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - url
+        - event_id
+        - id
+    comment: ""
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - url
+        - event_id
+        - id
+      filter: {}
+    comment: ""
+  - role: user
+    permission:
+      columns: []
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+    comment: ""

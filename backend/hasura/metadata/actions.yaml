@@ -1,0 +1,67 @@
+actions:
+  - name: siginUser
+    definition:
+      kind: synchronous
+      handler: http://backend:4000/login
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: anonymous
+      - role: user
+  - name: signUp
+    definition:
+      kind: synchronous
+      handler: http://backend:4000/register
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: anonymous
+      - role: user
+  - name: uploadBase64Image
+    definition:
+      kind: synchronous
+      handler: http://backend:4000/uploads
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: anonymous
+      - role: user
+  - name: uploadImages
+    definition:
+      kind: synchronous
+      handler: http://backend:4000/upload
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: anonymous
+      - role: user
+custom_types:
+  enums: []
+  input_objects:
+    - name: LoginInput
+    - name: RegisterUserInput
+    - name: LoginUserInput
+  objects:
+    - name: RegisterOutpt
+    - name: LoginOutput
+    - name: RegisterOutput
+    - name: UploadResponse
+    - name: LoginResponse
+    - name: userOut
+    - name: signUpOut
+    - name: Signoutput
+    - name: ImageUploadResponse
+    - name: ImageResponse
+  scalars: []

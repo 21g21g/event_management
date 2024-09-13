@@ -1,0 +1,5 @@
+- "!include public_bookmarks.yaml"
+- "!include public_events.yaml"
+- "!include public_imagestore.yaml"
+- "!include public_tickets.yaml"
+- "!include public_users.yaml"
