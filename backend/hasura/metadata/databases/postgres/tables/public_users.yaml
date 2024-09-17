@@ -63,9 +63,7 @@ select_permissions:
         - username
         - created_at
         - id
-      filter:
-        id:
-          _eq: X-Hasura-User-Id
+      filter: {}
     comment: ""
 update_permissions:
   - role: user
@@ -88,3 +86,19 @@ delete_permissions:
         id:
           _eq: X-Hasura-User-Id
     comment: ""
+event_triggers:
+  - name: wellcome_message
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: http://backend:4000/wellcome
+    request_transform:
+      method: POST
+      query_params: {}
+      template_engine: Kriti
+      version: 2

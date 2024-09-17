@@ -13,6 +13,7 @@ insert_permissions:
     permission:
       check: {}
       columns:
+        - isbookMarked
         - created_at
         - event_id
         - id
@@ -20,10 +21,9 @@ insert_permissions:
     comment: ""
   - role: user
     permission:
-      check:
-        user_id:
-          _eq: X-Hasura-User-Id
+      check: {}
       columns:
+        - isbookMarked
         - created_at
         - event_id
         - id
@@ -33,6 +33,7 @@ select_permissions:
   - role: anonymous
     permission:
       columns:
+        - isbookMarked
         - created_at
         - event_id
         - id
@@ -42,6 +43,18 @@ select_permissions:
   - role: user
     permission:
       columns:
+        - isbookMarked
+        - created_at
+        - event_id
+        - id
+        - user_id
+      filter: {}
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - isbookMarked
         - created_at
         - event_id
         - id
@@ -49,6 +62,7 @@ select_permissions:
       filter:
         user_id:
           _eq: X-Hasura-User-Id
+      check: null
     comment: ""
 delete_permissions:
   - role: user

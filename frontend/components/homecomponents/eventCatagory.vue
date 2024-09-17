@@ -1,29 +1,3 @@
-<template>
-          <div class="bg-gray-100">
-        <h1 class="font-bold text-3xl p-4">Explore Event By Category</h1>
-       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 p-4">
-         <h1 v-if="loading">Loading...</h1>
-        <h1 v-else-if="error">{{ error.message }}</h1>     
-        <div 
-        v-else 
-        v-for="event in uniqueCategories" 
-        :key="event.category"
-        class="cursor-pointer bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden" 
-        @click="handleClickShow(event.category, event.coverImage)"
-      >
-        <img 
-          :src="event.coverImage" 
-          alt="No image available" 
-          class="w-full h-48 object-cover rounded-t-lg" 
-        />
-        <div class="p-4">
-          <h1 class="text-center text-lg font-semibold text-gray-800">{{ event.category }}</h1>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { useRouter } from 'vue-router';
 import entertain from "../../assets/css/entairment.jpeg";
@@ -33,14 +7,14 @@ import health from "../../assets/css/health.jpeg";
 import tech from "../../assets/css/tech.jpeg";
 import education from "../../assets/css/education.jpeg";
 import { useQuery } from '@vue/apollo-composable';
-import { GET_ALL_EVENTS } from "../graphql/queries";
+import { GET_ALL_EVENTS_WTHOUT_FILTER } from "../../utils/queries";
 import { computed, onMounted } from 'vue';
 
 // Router instance
 const router = useRouter();
 
 // Query
-const { result, loading, error,refetch } = useQuery(GET_ALL_EVENTS);
+const { result, loading, error,refetch } = useQuery(GET_ALL_EVENTS_WTHOUT_FILTER);
 
 // Cover images mapping
 const coverImages = {
@@ -98,6 +72,31 @@ const fetchLatestEvents = async () => {
 onMounted(() => {
   fetchLatestEvents();
 });
-// Handle category click
 
 </script>
+<template>
+        <div >
+        <h1 class="font-bold text-3xl p-4">Explore Event By Category</h1>
+       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 p-4">
+         <h1 v-if="loading">Loading...</h1>
+        <h1 v-else-if="error">{{ error.message }}</h1>     
+        <div 
+        v-else 
+        v-for="event in uniqueCategories" 
+        :key="event.category"
+        class="cursor-pointer  rounded-lg  hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden" 
+        @click="handleClickShow(event.category, event.coverImage)"
+      >
+        <img 
+          :src="event.coverImage" 
+          alt="No image available" 
+          class="w-full h-48 object-cover rounded-full" 
+        />
+        <div class="p-4">
+          <h1 class="text-center text-lg font-semibold text-gray-800">{{ event.category }}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+

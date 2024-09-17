@@ -1,20 +1,22 @@
 import gql from "graphql-tag"
 
 
-  export const REGISTER_USER_MUTATION = gql`
-  mutation Register($email:String!,$password:String!,$username:String!){
-  registerUser(input:{email:$email,password:$password,username:$username}){
-    username
+
+export const REGISTER_USER_MUTATION = gql`
+  mutation Register($email: String!, $password: String!, $username: String!) {
+    signUp(email: $email, password: $password, username: $username) {
+      message
+    }
+  }
+`;
+export const LOGIN_MUTATION = gql`
+mutation loginUser($email:String!,$password:String!){
+  siginUser(email:$email,password:$password){
+    token
   }
 }
 `;
-export const LOGIN_MUTATION = gql`
- mutation loginUser($email: String!, $password: String!) {
-   loginUser(input: {email: $email, password: $password}) {
-     token
-   }
- }
-`
+
 export const GET_USER_BY_ID = gql`
 query user($id:uuid!){
   users_by_pk(id:$id){
@@ -225,6 +227,34 @@ mutation Event(
 
 export const GET_ALL_EVENTS=gql`
 
+query getEvent($search:String!,$limit:Int!,$offset:Int!){
+  events(where:{_or:[
+    {title:{_ilike:$search}},
+    {address:{_ilike:$search}},
+    {venue:{_ilike:$search}},
+     {description:{_ilike:$search}},
+     {category:{_ilike:$search}},
+  ]},
+    limit:$limit,
+    offset:$offset
+  )
+  {
+    id
+    title
+    description
+    address
+    venue
+    category
+    price
+    specific_price
+    featured_image
+    preparation_date
+    tags
+  }
+}
+`;
+export const GET_ALL_EVENTS_WTHOUT_FILTER=gql`
+
 query{
   events{
     id
@@ -287,9 +317,10 @@ query getEventById($id:uuid!){
 }`;
 
 export const USER_MAKE_BOOK_MARK=gql`
-mutation bookMark($user_id: uuid!, $event_id: uuid!) {
-  insert_bookmarks_one(object: {user_id:$user_id,event_id:$event_id}){
+mutation bookMark($user_id: uuid!, $event_id: uuid!,$isbookMarked:Boolean!) {
+  insert_bookmarks_one(object: {user_id:$user_id,event_id:$event_id,isbookMarked:$isbookMarked}){
     id
+    
     
   }
 }
@@ -317,3 +348,88 @@ query getBookMark($user_id:uuid!){
     
   }
 }`;
+
+export const SEARCH_TERMS=gql`
+query searchItems($search: String, $category: String!, $limit: Int) {
+  events_aggregate(where: {
+    _and: [
+      { category: { _eq: $category } },
+      {
+        _or: [
+          { title: { _ilike: $search } },
+          { description: { _ilike: $search } },
+          { address: { _ilike: $search } },
+          { venue: { _ilike: $search } }
+        ]
+      }
+    ]
+  }) {
+    aggregate {
+      count
+    }
+  }
+  
+  events(where: {
+    _and: [
+      { category: { _eq: $category } },
+      {
+        _or: [
+          { title: { _ilike: $search } },
+          { description: { _ilike: $search } },
+          { address: { _ilike: $search } },
+          { venue: { _ilike: $search } }
+        ]
+      }
+    ]
+  }, limit: $limit) {
+    id
+    title
+    category
+    description
+    address
+    venue
+    tags
+    preparation_date
+    price
+    specific_price
+    featured_image
+
+  }
+}
+`;
+
+export const GET_BOOK_MARKED_EVENT=gql`
+query getBookmark($user_id:uuid!,$event_id:uuid!){
+  bookmarks(where:{user_id:{_eq:$user_id},event_id:{_eq:$event_id}}){
+    isbookMarked
+  }
+    
+  }
+`;
+
+export const CATCH_TICKET=gql`
+mutation insertTicket($user_id:uuid!,$event_id:uuid!,$quantity:Int!,$catchedTicket:Boolean!){
+  insert_tickets_one(object:{user_id:$user_id,event_id:$event_id,quantity:$quantity,catchedTicket:$catchedTicket}){
+     id
+  
+  }
+}
+`;
+
+export const GET_TICKET_USER=gql`
+query getTicket($user_id:uuid!){
+  tickets(where:{user_id:{_eq:$user_id}}){
+    id
+    catchedTicket
+    user_id
+    quantity
+    event{
+      title
+      preparation_date
+      
+      
+    }
+  }
+  
+}
+`;

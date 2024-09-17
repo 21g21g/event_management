@@ -5,6 +5,8 @@ function base64UrlDecode(str) {
     // Decode base64
     const decoded = atob(str);
     // Convert decoded string to JSON
+    console.log(JSON.parse(decoded))
+
     return JSON.parse(decoded);
   }
   
@@ -14,6 +16,7 @@ function base64UrlDecode(str) {
       // Split token into parts
       const [header, payload, signature] = token.split('.');
       // Decode payload
+      
       return base64UrlDecode(payload);
     } catch (error) {
       console.error('Invalid token:', error);

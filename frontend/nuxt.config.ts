@@ -8,8 +8,9 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@pinia/nuxt'
   ],
+ 
   plugins: [
-    './plugins/apollo.client.ts'  
+    './plugins/apollo.client.ts'
   
   ],
   

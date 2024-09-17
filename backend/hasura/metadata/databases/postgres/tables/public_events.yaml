@@ -32,6 +32,7 @@ insert_permissions:
     permission:
       check: {}
       columns:
+        - images
         - tags
         - preparation_date
         - specific_price
@@ -51,6 +52,7 @@ insert_permissions:
     permission:
       check: {}
       columns:
+        - images
         - tags
         - preparation_date
         - specific_price
@@ -70,6 +72,7 @@ select_permissions:
   - role: anonymous
     permission:
       columns:
+        - images
         - tags
         - preparation_date
         - specific_price
@@ -89,28 +92,6 @@ select_permissions:
   - role: user
     permission:
       columns:
-        - tags
-        - preparation_date
-        - specific_price
-        - address
-        - category
-        - description
-        - featured_image
-        - price
-        - title
-        - venue
-        - created_at
-        - updated_at
-        - id
-        - user_id
-      filter:
-        id:
-          _eq: X-Hasura-User-Id
-    comment: ""
-update_permissions:
-  - role: anonymous
-    permission:
-      columns:
         - images
         - tags
         - preparation_date
@@ -127,8 +108,8 @@ update_permissions:
         - id
         - user_id
       filter: {}
-      check: null
     comment: ""
+update_permissions:
   - role: user
     permission:
       columns:
@@ -152,10 +133,6 @@ update_permissions:
       check: null
     comment: ""
 delete_permissions:
-  - role: anonymous
-    permission:
-      filter: {}
-    comment: ""
   - role: user
     permission:
       filter:

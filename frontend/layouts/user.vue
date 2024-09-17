@@ -1,8 +1,13 @@
+<script setup>
+
+import UserNavbar from "../components/userlayout/UserNavbar.vue";
+import UserSidebar from "../components/userlayout/UserSidebar.vue";
+</script>
 <template>
   <div class="flex flex-col min-h-screen">
 
     <div class="flex flex-grow ">     
-       <aside class=" w-20 md:w-64 bg-slate-50 text-white min-h-screen border-r-2 fixed left-0 right-0">
+       <aside class=" w-32 md:w-64 bg-slate-50 text-white min-h-screen border-r-2 fixed left-0  right-0">
       <UserSidebar/>
        </aside>
      
@@ -21,13 +26,10 @@
     </div>
   
     
-    <footer class="w-full z-50">
+    <footer class="w-full">
       <Footer/>
     </footer>
   </div>
 </template>
-<script setup>
-import UserNavbar from "../components/userlayout/UserNavbar.vue";
-import UserSidebar from "../components/userlayout/UserSidebar.vue";
-</script>
+
 

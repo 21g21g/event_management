@@ -6,14 +6,6 @@ object_relationships:
     using:
       foreign_key_constraint_on: event_id
 insert_permissions:
-  - role: anonymous
-    permission:
-      check: {}
-      columns:
-        - url
-        - event_id
-        - id
-    comment: ""
   - role: user
     permission:
       check: {}
@@ -37,4 +29,11 @@ select_permissions:
       filter:
         id:
           _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns: []
+      filter: {}
+      check: null
     comment: ""
