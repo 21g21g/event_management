@@ -10,6 +10,7 @@ import {insert_event_mutation} from "../../utils/queries"
 import {GET_USER_BY_HIS_ID} from "../../utils/queries"
 import {insert_image_imageTable} from "../../utils/queries"
 import { upload_image_action } from "../../utils/queries";
+import AlertMessage from "../../components/AlertMessage.vue"
 import gql from 'graphql-tag';
 import { useRouter } from 'vue-router';
 const router=useRouter()
@@ -20,6 +21,10 @@ definePageMeta({
     middleware:"auth-log"
 
 });
+const alertMessage = ref('');
+const alertVisible = ref(false);
+const alertType = ref('success');
+const loadings = ref(false);
 const { result, loading, error ,refetch} = useQuery(GET_USER_BY_HIS_ID, { id: userid.value });
 const {mutate:insertImage}=useMutation(insert_image_imageTable)
 const { mutate: uploadBase64Image } = useMutation(upload_image_action);
@@ -62,16 +67,21 @@ const setImageUrls = (urls) => {
 
 
 const { mutate: insertEvent } = useMutation(insert_event_mutation);
-
+const showAlert = (message, type = 'success') => {
+  alertMessage.value = message;
+  alertType.value = type;
+  alertVisible.value = true;
+  setTimeout(() => {
+    alertVisible.value = false;
+  }, 4000); 
+};
 // Form submission logic
 const onSubmit = async (values) => {
   try {
-    // if (imageUrls.value.length === 0) {
-    //   alert('Please upload at least one image.');
-    //   return;
-    // }
+  
     if (selectedImages.value.length === 0) {
-    alert('Please select images to upload.');
+    showAlert('Please select images to upload.', 'error');
+
     return;
   }
   
@@ -95,7 +105,6 @@ const onSubmit = async (values) => {
 
     imageUrls.value = await Promise.all(uploadPromises);
     console.log('Uploaded Image URLs:', imageUrls.value);
-    // alert('Images uploaded successfully!');
 
     const response = await insertEvent({
       title: values.title,
@@ -120,19 +129,23 @@ const onSubmit = async (values) => {
 
     await Promise.all(imagePromises);
 
-    alert('Event created successfully!');
+    showAlert('Event created successfully!', 'success');
+
     await refetch()
     router.replace("/user")
     console.log('Event ID:', eventId);
   } catch (err) {
     console.error('Error creating event:', err);
-    alert('Failed to create event.');
+    showAlert('Failed to create event.', 'error');
+
   }
 };
 </script>
 <template>
   <div class="flex flex-col mt-20">
     <h1 class="text-3xl text-center">Create an Event</h1>
+    <AlertMessage :message="alertMessage" :type="alertType" :visible="alertVisible" />
+
     <Form @submit="onSubmit" :validation-schema="toFieldValidator(schema)" class="max-w-2xl mx-auto p-8 bg-white shadow-md rounded-lg">
       <div class="mb-6">
         <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>

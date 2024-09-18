@@ -433,3 +433,13 @@ query getTicket($user_id:uuid!){
   
 }
 `;
+
+export const REMOVE_BOOKMARK_FROM_FAVOURITE=gql`
+mutation deleteBookmark($id: uuid!) {
+  delete_bookmarks_by_pk(id: $id){
+    id
+  }
+}
+
+
+`;

@@ -5,6 +5,9 @@ const isMenuOpen = ref(false);
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
+const closeMenu=()=>{
+  isMenuOpen.value=false
+}
 </script>
 
 <style scoped>
@@ -16,7 +19,7 @@ const toggleMenu = () => {
   <nav class="bg-white shadow-lg p-4">
     <div class="container mx-auto flex items-center justify-between">
       <NuxtLink to="/" exact class="text-2xl font-bold text-blue-600 hover:text-blue-800 transition duration-300">
-        minabevent
+        MinabEvent
       </NuxtLink>
       <div class="flex items-center space-x-4 ">
         <div class="hidden md:flex">
@@ -65,6 +68,8 @@ const toggleMenu = () => {
         to="/auth/login" 
         exact 
         class="block px-4 py-2 text-blue-600 hover:bg-blue-100"
+         @click="closeMenu"
+
       >
         Login
       </NuxtLink>
@@ -72,6 +77,8 @@ const toggleMenu = () => {
         to="/auth/signup" 
         exact 
         class="block px-4 py-2 text-blue-600 hover:bg-blue-100"
+      @click="closeMenu"
+
       >
         Signup
       </NuxtLink>

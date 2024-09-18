@@ -4,7 +4,7 @@ export default defineNuxtRouteMiddleware((to,from)=>{
   console.log(to.path)
     const authStore=useAuthStore()
     if (authStore.isLoggedin) {
-      if (to.path === '/auth/login' || to.path === '/auth/signup' ||to.path==='/') {
+      if (to.path === '/auth/login' || to.path === '/auth/signup' ||to.path==='/' ||to.path==='/catagoryDetail' ||to.path==='/event') {
         return navigateTo('/user')
       }
     }

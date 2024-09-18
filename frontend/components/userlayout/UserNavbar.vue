@@ -52,7 +52,7 @@ const clickLogout=()=>{
   <div class="w-full bg-white shadow-md sticky top-0 z-50">
     <div class="flex justify-between items-center px-4 py-4 md:px-8">
       <NuxtLink to="/user" class="text-2xl font-bold text-blue-600 hover:text-blue-800">
-        minabevent
+        MinabEvent
       </NuxtLink>
       <button
         @click="toggleMobileMenu"
@@ -79,17 +79,17 @@ const clickLogout=()=>{
             {{ error ? 'Error loading user' : 'No user data found' }}
           </h3>
 
-          <div v-if="onhover" class="absolute top-10 right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 transition-transform transform origin-top-right z-10">
-            <NuxtLink to="/user/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+          <div v-if="onhover" class="absolute top-10 right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border h-28 border-gray-200 transition-transform transform origin-top-right z-10">
+            <!-- <NuxtLink to="/user/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
               Profile
-            </NuxtLink>
+            </NuxtLink> -->
             <button @click="clickLogout"
                     class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
               Logout
             </button>
-            <NuxtLink to="/help" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+            <!-- <NuxtLink to="/help" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
               Help
-            </NuxtLink>
+            </NuxtLink> -->
           </div>
         </div>
       </div>
@@ -120,13 +120,13 @@ const clickLogout=()=>{
               v-if="onhover"
               class="absolute top-10 right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 transition-transform transform origin-top-right z-10"
             >
-              <NuxtLink
+              <!-- <NuxtLink
                 to="/user/profile"
                 exact
                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
               >
                 Profile
-              </NuxtLink>
+              </NuxtLink> -->
               <button
                 @click="clickLogout"
                 exact
@@ -134,13 +134,13 @@ const clickLogout=()=>{
               >
                 Logout
               </button>
-              <NuxtLink
+              <!-- <NuxtLink
                 to="/help"
                 exact
                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
               >
                 Help
-              </NuxtLink>
+              </NuxtLink> -->
             </div>
           </div>
         </div>

@@ -9,16 +9,6 @@ object_relationships:
     using:
       foreign_key_constraint_on: user_id
 insert_permissions:
-  - role: anonymous
-    permission:
-      check: {}
-      columns:
-        - isbookMarked
-        - created_at
-        - event_id
-        - id
-        - user_id
-    comment: ""
   - role: user
     permission:
       check: {}
@@ -30,16 +20,6 @@ insert_permissions:
         - user_id
     comment: ""
 select_permissions:
-  - role: anonymous
-    permission:
-      columns:
-        - isbookMarked
-        - created_at
-        - event_id
-        - id
-        - user_id
-      filter: {}
-    comment: ""
   - role: user
     permission:
       columns:
@@ -48,7 +28,9 @@ select_permissions:
         - event_id
         - id
         - user_id
-      filter: {}
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
     comment: ""
 update_permissions:
   - role: user

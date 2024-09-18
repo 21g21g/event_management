@@ -13,6 +13,18 @@ import { useRouter } from 'vue-router';
 import { REGISTER_USER_MUTATION } from "../../utils/queries";
 const router = useRouter();
 const { resetForm, setErrors } = useForm();
+const alertMessage = ref('');
+const alertVisible = ref(false);
+const alertType = ref('success');
+const showAlert = (message, type = 'success') => {
+  alertMessage.value = message;
+  alertType.value = type;
+  alertVisible.value = true;
+  // Extend the timeout based on the alert duration
+  setTimeout(() => {
+    alertVisible.value = false;
+  }, 2000); 
+};
 const { mutate: registerUser } = useMutation(REGISTER_USER_MUTATION);
 const userData = ref({
   username: '',
@@ -35,6 +47,8 @@ const signupRegister = async () => {
      console.log('Mutation response:', data);
     if (data && data.signUp) {
       successMessage.value = data.signUp.message;
+          // showAlert(data.signUp.message, 'success');
+
       
       // Reset form and validation state
       resetForm();
@@ -48,7 +62,7 @@ const signupRegister = async () => {
       console.error('No response from server');
     }
   } catch (error) {
-    console.error('Registration error:', error);
+    showAlert("Registration Error", 'error');
   }
 };
 
@@ -64,6 +78,8 @@ const schema = z.object({
 </script>
 <template>
   <div class="flex flex-col min-h-screen bg-gray-100 justify-center items-center">
+        <AlertMessage :message="alertMessage" :type="alertType" :visible="alertVisible" />
+
     <Form @submit="signupRegister" :validation-schema="toFieldValidator(schema)" class="flex flex-col justify-center items-center w-full max-w-md p-6 bg-white rounded-lg">
       <div class="flex flex-col w-full mb-4">
         <label class="font-semibold text-gray-600 mb-2">User Name</label>

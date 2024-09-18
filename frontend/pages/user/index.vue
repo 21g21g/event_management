@@ -1,18 +1,18 @@
 <script setup>
+ definePageMeta({
+  layout: 'user',
+  middleware:"auth-log"
 
+});
 import { ref } from 'vue';
 import { useAuthStore } from '../../stores/authstore';
 import { GET_USER_BY_HIS_ID } from "../../utils/queries";
 import {Update_Event_ById} from "../../utils/queries"
 import {DELETE_EVENT_BY_ID} from "../../utils/queries"
 import { useQuery, useMutation } from '@vue/apollo-composable';
-definePageMeta({
-  layout: 'user',
-  middleware:"auth-log"
-
-});
 const show = ref(false);
-const popup=ref(true)
+const popup=ref(false)
+const selectedEventId=ref(null)
 const authStore = useAuthStore();
 const userid = ref(authStore.userId);
 const { result, loading, error ,refetch} = useQuery(GET_USER_BY_HIS_ID, { id: userid.value });
@@ -49,20 +49,26 @@ const handleEdit = (item) => {
 const handleCancel = () => {
   show.value = false;
 };
-
-const handleDelete = async(id) => {
-  try{
-        const response=await deleteEvent({id:String(id)})
-        console.log("you delete succesfully")
-        await refetch()
-
-  }catch(error){
- console.log("cannot delete the user")
-  }
-
-  console.log("Event ID to delete:", id);
+const cancelAction=()=>{
+  popup.value=false
+}
+const handleDelete = (id) => {
+  selectedEventId.value = id; 
+  popup.value = true; 
 };
 
+const confirmDelete = async () => {
+  if (selectedEventId.value !== null) {
+    try {
+      await deleteEvent({ id: String(selectedEventId.value) });
+      console.log("Event deleted successfully");
+      await refetch();
+      popup.value = false; 
+    } catch (error) {
+      console.log("Cannot delete the event:", error);
+    }
+  }
+};
 
 const onSubmit = async (id) => {
   try {
@@ -90,6 +96,24 @@ const onSubmit = async (id) => {
 <template>
   <div class="p-6 mt-20">
     <div v-if="show === false">
+       <div v-if="popup" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md text-center">
+      <h1 class="text-xl font-semibold text-gray-800 mb-4">Hello</h1>
+      <p class="text-gray-600 mb-6">Are you sure you want to delete?</p>
+      <div class="flex justify-center gap-4">
+        <button 
+          class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors" 
+          @click="confirmDelete">
+          Delete
+        </button>
+        <button 
+          class="bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500 transition-colors" 
+          @click="cancelAction">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead>
@@ -144,125 +168,135 @@ const onSubmit = async (id) => {
     </div>
 
    <div v-if="show === true" class="flex flex-col mt-10 w-full">
-      <h1 class="text-3xl text-center mb-8 font-semibold text-gray-700">Edit The Event</h1>
-      <form @submit.prevent="onSubmit(formData.id)" class="md:w-1/2 mx-auto p-8 bg-white shadow-md rounded-lg">
-        <div class="mb-6">
-          <label for="title" class="block text-gray-600 text-sm font-medium mb-2">Title</label>
-          <input
-            v-model="formData.title"
-            name="title"
-            type="text"
-            placeholder="Event Title"
-            class="sm:w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-          />
-        </div>
+  <h1 class="text-3xl text-center mb-8 font-semibold text-gray-700">Edit The Event</h1>
+  <form
+    @submit.prevent="onSubmit(formData.id)"
+    class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mx-auto p-8 bg-white shadow-lg rounded-lg"
+  >
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="mb-6">
+        <label for="title" class="block text-gray-600 text-sm font-medium mb-2">Title</label>
+        <input
+          v-model="formData.title"
+          name="title"
+          type="text"
+          placeholder="Event Title"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        />
+      </div>
 
-        <div class="mb-6">
-          <label for="description" class="block text-gray-600 text-sm font-medium mb-2">Description</label>
-          <textarea
-            v-model="formData.description"
-            name="description"
-            placeholder="Event Description"
-            class="sm:w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-            rows="3"
-          ></textarea>
-        </div>
+      <div class="mb-6">
+        <label for="venue" class="block text-gray-600 text-sm font-medium mb-2">Venue</label>
+        <input
+          v-model="formData.venue"
+          name="venue"
+          type="text"
+          placeholder="Venue Name"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        />
+      </div>
 
-        <div class="mb-6">
-          <label for="venue" class="block text-gray-600 text-sm font-medium mb-2">Venue</label>
-          <input
-            v-model="formData.venue"
-            name="venue"
-            type="text"
-            placeholder="Venue Name"
-            class="sm:w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-          />
-        </div>
+      <div class="mb-6">
+        <label for="preparationDate" class="block text-gray-600 text-sm font-medium mb-2">Preparation Date</label>
+        <input
+          v-model="formData.preparationDate"
+          name="preparationDate"
+          type="date"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        />
+      </div>
 
-        <div class="mb-6">
-          <label for="address" class="block text-gray-600 text-sm font-medium mb-2">Address</label>
-          <input
-            v-model="formData.address"
-            name="address"
-            type="text"
-            placeholder="Address"
-            class="sm:w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-          />
-        </div>
-
-        <div class="mb-6">
-          <label for="price" class="block text-gray-600 text-sm font-medium mb-2">Price</label>
-          <select
-            v-model="formData.price"
-            name="price"
-            class="sm:w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-          >
-            <option value="free">Free</option>
-            <option value="paid">Paid</option>
-          </select>
-          <input
-            v-if="formData.price === 'paid'"
-            v-model="formData.specificPrice"
-            name="specificPrice"
-            type="number"
-            placeholder="Specify Amount"
-            class="sm:w-full px-4 py-3 mt-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-          />
-        </div>
-
-        <div class="mb-6">
-          <label for="preparationDate" class="block text-gray-600 text-sm font-medium mb-2">Preparation Date</label>
-          <input
-            v-model="formData.preparationDate"
-            name="preparationDate"
-            type="date"
-            class="sm:w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-          />
-        </div>
-
-        <div class="mb-6">
-          <label for="category" class="block text-gray-600 text-sm font-medium mb-2">Category</label>
-          <select
-            v-model="formData.category"
-            name="category"
-            class="sm:w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-          >
-            <option value="Food">Food</option>
-            <option value="Tech">Tech</option>
-            <option value="Education">Education</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Sport">Sport</option>
-          </select>
-        </div>
-
-        <div class="mb-6">
-          <label for="tags" class="block text-gray-600 text-sm font-medium mb-2">Tags</label>
-          <input
-            v-model="formData.tags"
-            name="tags"
-            type="text"
-            placeholder="Comma-separated tags"
-            class="sm:w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-          />
-        </div>
-
-        <button
-          type="submit"
-          class="w-40 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
-          @click="updateClicked"
+      <div class="mb-6">
+        <label for="category" class="block text-gray-600 text-sm font-medium mb-2">Category</label>
+        <select
+          v-model="formData.category"
+          name="category"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
         >
-          Update Event
-        </button>
-      </form>
-
-      <button
-      @click="handleCancel"
-        class="mt-4 w-1/2 self-center bg-gray-300 text-gray-700 px-4 py-3 rounded-lg shadow-md hover:bg-gray-400 transition focus:outline-none focus:ring-2 focus:ring-gray-400"
-      >
-        Cancel
-      </button>
-     
+          <option value="Food">Food</option>
+          <option value="Tech">Tech</option>
+          <option value="Education">Education</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Sport">Sport</option>
+        </select>
+      </div>
     </div>
+
+    <div class="mb-6">
+      <label for="description" class="block text-gray-600 text-sm font-medium mb-2">Description</label>
+      <textarea
+        v-model="formData.description"
+        name="description"
+        placeholder="Event Description"
+        class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        rows="3"
+      ></textarea>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="mb-6">
+        <label for="address" class="block text-gray-600 text-sm font-medium mb-2">Address</label>
+        <input
+          v-model="formData.address"
+          name="address"
+          type="text"
+          placeholder="Address"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        />
+      </div>
+
+      <div class="mb-6">
+        <label for="price" class="block text-gray-600 text-sm font-medium mb-2">Price</label>
+        <select
+          v-model="formData.price"
+          name="price"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        >
+          <option value="free">Free</option>
+          <option value="paid">Paid</option>
+        </select>
+        <input
+          v-if="formData.price === 'paid'"
+          v-model="formData.specificPrice"
+          name="specificPrice"
+          type="number"
+          placeholder="Specify Amount"
+          class="w-full px-4 py-3 mt-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        />
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label for="tags" class="block text-gray-600 text-sm font-medium mb-2">Tags</label>
+      <input
+        v-model="formData.tags"
+        name="tags"
+        type="text"
+        placeholder="Comma-separated tags"
+        class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+      />
+    </div>
+
+    <div class="flex justify-center">
+      <button
+        type="submit"
+        class="w-full md:w-auto bg-blue-500 text-white px-8 py-3 rounded-lg shadow-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+        @click="updateClicked"
+      >
+        Update Event
+      </button>
+    </div>
+  </form>
+
+  <div class="flex justify-center mt-4">
+    <button
+      @click="handleCancel"
+      class="w-full md:w-auto bg-gray-300 text-gray-700 px-8 py-3 rounded-lg shadow-md hover:bg-gray-400 transition focus:outline-none focus:ring-2 focus:ring-gray-400"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
 
   </div>
 </template>

@@ -110,9 +110,10 @@ select_permissions:
       filter: {}
     comment: ""
 update_permissions:
-  - role: user
+  - role: anonymous
     permission:
       columns:
+        - images
         - tags
         - preparation_date
         - specific_price
@@ -127,12 +128,35 @@ update_permissions:
         - updated_at
         - id
         - user_id
-      filter:
-        id:
-          _eq: X-Hasura-User-Id
+      filter: {}
+      check: null
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - images
+        - tags
+        - preparation_date
+        - specific_price
+        - address
+        - category
+        - description
+        - featured_image
+        - price
+        - title
+        - venue
+        - created_at
+        - updated_at
+        - id
+        - user_id
+      filter: {}
       check: null
     comment: ""
 delete_permissions:
+  - role: anonymous
+    permission:
+      filter: {}
+    comment: ""
   - role: user
     permission:
       filter:

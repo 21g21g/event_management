@@ -84,13 +84,13 @@ onMounted(() => {
         v-else 
         v-for="event in uniqueCategories" 
         :key="event.category"
-        class="cursor-pointer  rounded-lg  hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden" 
+        class="cursor-pointer  rounded-lg border-2 hover:shadow-xl shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden" 
         @click="handleClickShow(event.category, event.coverImage)"
       >
         <img 
           :src="event.coverImage" 
           alt="No image available" 
-          class="w-full h-48 object-cover rounded-full" 
+          class="w-full h-48 object-cover rounded-lg" 
         />
         <div class="p-4">
           <h1 class="text-center text-lg font-semibold text-gray-800">{{ event.category }}</h1>

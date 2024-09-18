@@ -3,7 +3,7 @@
        <homecover/>
        <eventCatagory/>  
        <allLocation />
-   </div>
+   </div> 
 </template>
 <script setup>
  definePageMeta({

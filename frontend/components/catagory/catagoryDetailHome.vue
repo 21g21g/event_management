@@ -9,7 +9,7 @@ import {DummyUser} from "../dummy"
 import { useRouter, useRoute } from 'vue-router';
 import { useQuery } from "@vue/apollo-composable";
 const search=ref("")
-const limit=ref(3)
+const limit=ref(6)
 const totalEvents = ref(0);
 const filters = ref({
   price: {
@@ -47,7 +47,7 @@ const filteredEvents = computed(() => {
 
 
 const viewMoreButton=()=>{
-    limit.value +=2
+    limit.value +=3
 
 }
 const canViewMore = computed(() => {

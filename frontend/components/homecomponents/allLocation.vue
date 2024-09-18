@@ -75,7 +75,6 @@ onMounted(() => {
 </style>
 <template>
   <div class="flex flex-col w-full bg-gray-100 mt-10">
-    <!-- Search Input -->
     <div class="relative flex items-center p-2 rounded-md h-16 justify-center shadow-md mx-auto max-w-4xl w-full">
       <input 
         type="text" 
@@ -85,16 +84,13 @@ onMounted(() => {
       />
     </div>
 
-    <!-- Event List -->
     <div class="flex flex-col p-4 bg-gray-100">
       <h1 class="font-bold text-3xl mb-4 text-center">All Events</h1>
       
-      <!-- No Events Found -->
       <div v-if="filteredData.length === 0 && !loading" class="text-black ml-20">
         <p class="text-2xl text-orange-800 text-center">No events found. Please try a different search or check back later.</p>
       </div>
       
-      <!-- Events Grid -->
       <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         <div v-if="loading">Loading...</div>
         <div v-else-if="error">There is an error</div>
@@ -115,7 +111,6 @@ onMounted(() => {
         </div>
       </div>
       
-      <!-- Pagination Controls -->
       <div class="text-center flex flex-row gap-3 mt-6">
         <button 
           class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors duration-300 mx-auto disabled:bg-gray-400 disabled:cursor-not-allowed"

@@ -25,9 +25,9 @@ type SignInRequest struct {
 }
 
 type JWTSecret struct {
-	Type                string `json:"type"`
-	Key                 string `json:"key"`
-	ClaimsNamespacePath string `json:"claims_namespace_path"`
+	Type            string `json:"type"`
+	Key             string `json:"key"`
+	ClaimsNamespace string `json:"claims_namespace"`
 }
 
 var (
@@ -158,6 +158,7 @@ func generateJWT(userID string) (string, error) {
 		"https://hasura.io/jwt/claims": map[string]interface{}{
 			"x-hasura-allowed-roles": []string{"user", "admin", "anonymous"},
 			"x-hasura-default-role":  "anonymous",
+			"x-hasura-role":          "user",
 			"x-hasura-user-id":       userID,
 		},
 		"exp": time.Now().Add(24 * time.Hour).Unix(),

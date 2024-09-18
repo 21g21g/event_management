@@ -1,5 +1,5 @@
 <script setup>
-import { Form, Field, ErrorMessage,useForm} from 'vee-validate';
+import { Form, Field, ErrorMessage, useForm } from 'vee-validate';
 import { z } from 'zod';
 import { toFieldValidator } from '@vee-validate/zod';
 import { ref } from 'vue';
@@ -7,21 +7,23 @@ import gql from 'graphql-tag';
 import { useMutation } from '@vue/apollo-composable';
 import Eye from "../../assets/icons/Eye.vue";
 import { useRouter } from 'vue-router';
-import {getUserIdFromToken} from "../../utils/util"
-import {useAuthStore} from "../../stores/authstore"
-import {LOGIN_MUTATION} from "../../utils/queries"
+import { getUserIdFromToken } from "../../utils/util";
+import { useAuthStore } from "../../stores/authstore";
+import { LOGIN_MUTATION } from "../../utils/queries";
 
 definePageMeta({
-  middleware:"after-log"
-})
-const authStore=useAuthStore()
-const router=useRouter()
+  middleware: "after-log"
+});
+
+const alertMessage = ref('');
+const alertVisible = ref(false);
+const alertType = ref('success');
+const authStore = useAuthStore();
+const router = useRouter();
 const user = ref({
   email: "",
   password: ""
 });
-const { resetForm,setErrors } = useForm();
-
 
 // Form validation schema
 const schema = z.object({
@@ -35,64 +37,72 @@ const showPassword = () => {
   togglePassword.value = !togglePassword.value;
 };
 
+const showAlert = (message, type = 'success') => {
+  alertMessage.value = message;
+  alertType.value = type;
+  alertVisible.value = true;
+  setTimeout(() => {
+    alertVisible.value = false;
+  }, 3000); // Adjusted timeout for better visibility
+};
+
 const { mutate: loginUser } = useMutation(LOGIN_MUTATION);
 
 // Error handling
-const errorMessage = ref(null);
+const { resetForm } = useForm();
 
-// Submit function
 const onSubmit = async () => {
   try {
     const { data } = await loginUser({
-      
-        email: user.value.email,
-        password: user.value.password,
-      
+      email: user.value.email,
+      password: user.value.password,
     });
 
-  if (data && data.siginUser && data.siginUser.token) {
-          const token = data.siginUser.token;
-          // Save the token to localStorage
-          localStorage.setItem('token', token);
-        
-           const userid=getUserIdFromToken(token)
-            authStore.setUserId(userid)
-            authStore.setIsloggedin(true)
-       
-    const redirectPath = localStorage.getItem('redirectAfterLogin');
-  if (redirectPath) {
-    // Remove redirect path from localStorage
-    localStorage.removeItem('redirectAfterLogin');
-    // Redirect to the saved path
-    resetForm()
-    router.replace(redirectPath);
-  } else {
-    resetForm()
-   router.replace("/user");  
- }
+    if (data && data.siginUser && data.siginUser.token) {
+      const token = data.siginUser.token;
+      console.log(token);
+      localStorage.setItem('token', token);
+      const userId = getUserIdFromToken(token);
+      authStore.setUserId(userId);
+      authStore.setIsloggedin(true);
 
-         
-        }
+      const redirectPath = localStorage.getItem('redirectAfterLogin');
+      if (redirectPath) {
+        localStorage.removeItem('redirectAfterLogin');
+        resetForm();
+        router.replace(redirectPath);
+      } else {
+        resetForm();
+        showAlert('You logged in successfully', 'success');
+        setTimeout(() => {
+          router.replace("/user");
+        }, 2000);
+      }
+    }
   } catch (error) {
-    errorMessage.value = "Login failed. Please check your credentials.";
+    showAlert("Login failed. Please check your credentials.", 'error');
   }
 };
 </script>
+
 <template>
-         <div class="flex flex-col min-h-screen bg-gray-100 justify-center items-center">
-         <Form @submit="onSubmit" :validation-schema="toFieldValidator(schema)" class="flex flex-col justify-center items-center w-full max-w-md p-6 bg-white rounded-lg ">
-         <h1 class="font-bold text-2xl mb-4 text-gray-800">Login Page</h1>
-          <div class="flex flex-col w-full mb-4">
-          <label class="font-semibold text-gray-600 mb-2">Email</label>
-          <Field 
-           type="email" 
-           name="email"
-           v-model="user.email" 
-           placeholder="Enter email" 
-           class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+  <div class="flex flex-col min-h-screen bg-gray-100 justify-center items-center">
+    <AlertMessage :message="alertMessage" :type="alertType" :visible="alertVisible" />
+
+    <Form @submit="onSubmit" :validation-schema="toFieldValidator(schema)" class="flex flex-col justify-center items-center w-full max-w-md p-6 bg-white rounded-lg ">
+      <h1 class="font-bold text-2xl mb-4 text-gray-800">Login Page</h1>
+
+      <div class="flex flex-col w-full mb-4">
+        <label class="font-semibold text-gray-600 mb-2">Email</label>
+        <Field 
+          type="email" 
+          name="email"
+          v-model="user.email" 
+          placeholder="Enter email" 
+          class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
         <ErrorMessage name="email" class="text-red-500 text-sm" />
-         </div>
+      </div>
 
       <div class="flex flex-col w-full mb-6">
         <label class="font-semibold text-gray-600 mb-2">Password</label>
@@ -109,8 +119,6 @@ const onSubmit = async () => {
         </div>
       </div>
 
-      <div v-if="errorMessage" class="text-red-500 text-sm mb-4">{{ errorMessage }}</div>
-
       <button 
         type="submit" 
         class="w-full py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -125,4 +133,3 @@ const onSubmit = async () => {
     </Form>
   </div>
 </template>
-

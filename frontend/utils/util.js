@@ -26,6 +26,7 @@ function base64UrlDecode(str) {
   
   // Function to get user ID from decoded token
   export function getUserIdFromToken(token) {
+    console.log(token)
     const decodedToken = decodeToken(token);
     if (decodedToken && decodedToken['https://hasura.io/jwt/claims']) {
       return decodedToken['https://hasura.io/jwt/claims']['x-hasura-user-id'];
