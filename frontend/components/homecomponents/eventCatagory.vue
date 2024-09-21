@@ -10,7 +10,6 @@ import { useQuery } from '@vue/apollo-composable';
 import { GET_ALL_EVENTS_WTHOUT_FILTER } from "../../utils/queries";
 import { computed, onMounted } from 'vue';
 
-// Router instance
 const router = useRouter();
 
 // Query

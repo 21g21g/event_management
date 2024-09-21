@@ -28,26 +28,6 @@ array_relationships:
           name: tickets
           schema: public
 insert_permissions:
-  - role: anonymous
-    permission:
-      check: {}
-      columns:
-        - images
-        - tags
-        - preparation_date
-        - specific_price
-        - address
-        - category
-        - description
-        - featured_image
-        - price
-        - title
-        - venue
-        - created_at
-        - updated_at
-        - id
-        - user_id
-    comment: ""
   - role: user
     permission:
       check: {}
@@ -110,27 +90,6 @@ select_permissions:
       filter: {}
     comment: ""
 update_permissions:
-  - role: anonymous
-    permission:
-      columns:
-        - images
-        - tags
-        - preparation_date
-        - specific_price
-        - address
-        - category
-        - description
-        - featured_image
-        - price
-        - title
-        - venue
-        - created_at
-        - updated_at
-        - id
-        - user_id
-      filter: {}
-      check: null
-    comment: ""
   - role: user
     permission:
       columns:
@@ -149,17 +108,15 @@ update_permissions:
         - updated_at
         - id
         - user_id
-      filter: {}
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
       check: null
     comment: ""
 delete_permissions:
-  - role: anonymous
-    permission:
-      filter: {}
-    comment: ""
   - role: user
     permission:
       filter:
-        id:
+        user_id:
           _eq: X-Hasura-User-Id
     comment: ""

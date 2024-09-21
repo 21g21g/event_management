@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   modules: [
@@ -8,6 +9,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@pinia/nuxt'
   ],
+  
  
   plugins: [
     './plugins/apollo.client.ts'
@@ -35,6 +37,11 @@ export default defineNuxtConfig({
    
   },
   
-  ssr:true
+  ssr:true,
+  runtimeConfig:{
+    public:{
+      hasuraAdminSecret:process.env.HASURA_ADMIN_SECRET
+    }
+  }
   
   })

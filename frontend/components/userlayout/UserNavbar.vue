@@ -7,7 +7,7 @@ import Toogle from "../../assets/icons/Toogle.vue";
 import { useAuthStore } from "../../stores/authstore";
 import { useQuery } from "@vue/apollo-composable";
 import gql from 'graphql-tag';
-import {GET_USER_BY_ID} from "../../utils/queries"
+import {GET_USER_BY_HIS_ID} from "../../utils/queries"
 import { useRouter } from 'vue-router';
 const router=useRouter()
 const authStore = useAuthStore();
@@ -20,14 +20,12 @@ const hoverClick = () => {
 
 const userid = ref(authStore.userId);
 
-const { result: data, loading, error } = useQuery(GET_USER_BY_ID, { id: userid.value });
+const { result: data, loading, error } = useQuery(GET_USER_BY_HIS_ID);
 
 
 
 const userData = computed(() => {
-  return data.value?.users_by_pk || null;
-});
-
+return data.value?.users[0] || null;});
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
@@ -35,6 +33,7 @@ const toggleMobileMenu = () => {
 const clickLogout=()=>{
   console.log("the user clicked the logout button")
   localStorage.removeItem("token")
+  localStorage.removeItem("userId")
   authStore.setUserId(null);
   authStore.setIsloggedin(false);
   router.replace("/auth/login")
@@ -73,23 +72,19 @@ const clickLogout=()=>{
           <Avater />
           <h3 v-if="loading">Loading...</h3>
           <h3 v-else-if="userData" class="text-blue-600 font-medium ml-2">
-            {{ userData.username }}
+            {{ userData?.username }}
           </h3>
           <h3 v-else class="text-red-500">
             {{ error ? 'Error loading user' : 'No user data found' }}
           </h3>
 
           <div v-if="onhover" class="absolute top-10 right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border h-28 border-gray-200 transition-transform transform origin-top-right z-10">
-            <!-- <NuxtLink to="/user/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
-              Profile
-            </NuxtLink> -->
+          
             <button @click="clickLogout"
                     class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
               Logout
             </button>
-            <!-- <NuxtLink to="/help" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200">
-              Help
-            </NuxtLink> -->
+          
           </div>
         </div>
       </div>

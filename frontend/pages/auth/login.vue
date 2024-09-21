@@ -60,19 +60,19 @@ const onSubmit = async () => {
 
     if (data && data.siginUser && data.siginUser.token) {
       const token = data.siginUser.token;
-      console.log(token);
       localStorage.setItem('token', token);
       const userId = getUserIdFromToken(token);
-      authStore.setUserId(userId);
-      authStore.setIsloggedin(true);
+      if (userId) {
+        localStorage.setItem('userId', userId);
+      } else {
+        console.log('Failed to decode user ID from token');
+      }
 
       const redirectPath = localStorage.getItem('redirectAfterLogin');
       if (redirectPath) {
         localStorage.removeItem('redirectAfterLogin');
-        resetForm();
         router.replace(redirectPath);
       } else {
-        resetForm();
         showAlert('You logged in successfully', 'success');
         setTimeout(() => {
           router.replace("/user");

@@ -36,7 +36,9 @@ insert_permissions:
     comment: ""
   - role: user
     permission:
-      check: {}
+      check:
+        id:
+          _eq: X-Hasura-User-Id
       columns:
         - email
         - password
@@ -63,20 +65,11 @@ select_permissions:
         - username
         - created_at
         - id
-      filter: {}
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
     comment: ""
 update_permissions:
-  - role: anonymous
-    permission:
-      columns:
-        - email
-        - password
-        - username
-        - created_at
-        - id
-      filter: {}
-      check: {}
-    comment: ""
   - role: user
     permission:
       columns:

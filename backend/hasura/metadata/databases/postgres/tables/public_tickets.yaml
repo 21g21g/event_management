@@ -11,7 +11,9 @@ object_relationships:
 insert_permissions:
   - role: user
     permission:
-      check: {}
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
       columns:
         - catchedTicket
         - quantity

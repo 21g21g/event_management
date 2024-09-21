@@ -9,7 +9,6 @@ actions:
         template_engine: Kriti
         version: 2
     permissions:
-      - role: anonymous
       - role: user
   - name: signUp
     definition:

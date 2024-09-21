@@ -4,7 +4,7 @@
   middleware:"auth-log"
 
 });
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useAuthStore } from '../../stores/authstore';
 import { GET_USER_BY_HIS_ID } from "../../utils/queries";
 import {Update_Event_ById} from "../../utils/queries"
@@ -15,7 +15,7 @@ const popup=ref(false)
 const selectedEventId=ref(null)
 const authStore = useAuthStore();
 const userid = ref(authStore.userId);
-const { result, loading, error ,refetch} = useQuery(GET_USER_BY_HIS_ID, { id: userid.value });
+const { result, loading, error ,refetch} = useQuery(GET_USER_BY_HIS_ID);
 const {mutate:updateEvent}=useMutation(Update_Event_ById)
 const {mutate:deleteEvent}=useMutation(DELETE_EVENT_BY_ID)
 const formData = ref({
@@ -30,9 +30,8 @@ const formData = ref({
   category: '',
   tags: ''
 });
-
-const handleEdit = (item) => {
-  formData.value = {
+    const handleEdit = (item) => {
+    formData.value = {
     title: item.title,
     description: item.description,
     venue: item.venue,
@@ -56,6 +55,7 @@ const handleDelete = (id) => {
   selectedEventId.value = id; 
   popup.value = true; 
 };
+
 
 const confirmDelete = async () => {
   if (selectedEventId.value !== null) {
@@ -92,6 +92,9 @@ const onSubmit = async (id) => {
     console.log('Error updating event:', error);
   }
 };
+onMounted(()=>{
+  refetch()
+})
 </script>
 <template>
   <div class="p-6 mt-20">
@@ -136,7 +139,7 @@ const onSubmit = async (id) => {
             </tr>
             <tr
               v-else
-              v-for="(item, index) in result.users_by_pk?.events"
+              v-for="(item, index) in result?.users[0]?.events"
               :key="index"
               class="hover:bg-gray-50 transition duration-300 ease-in-out"
             >

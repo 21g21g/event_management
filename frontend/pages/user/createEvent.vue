@@ -5,17 +5,14 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
 import { toFieldValidator } from '@vee-validate/zod';
 import { z } from 'zod';
 import { useMutation,useQuery } from '@vue/apollo-composable';
-import { useAuthStore } from '../../stores/authstore';
 import {insert_event_mutation} from "../../utils/queries"
 import {GET_USER_BY_HIS_ID} from "../../utils/queries"
 import {insert_image_imageTable} from "../../utils/queries"
 import { upload_image_action } from "../../utils/queries";
 import AlertMessage from "../../components/AlertMessage.vue"
-import gql from 'graphql-tag';
 import { useRouter } from 'vue-router';
 const router=useRouter()
-const authStore = useAuthStore();
-const userid = ref(authStore.userId);
+const userid = ref(localStorage.getItem("userId"));
 definePageMeta({
     layout: 'user',
     middleware:"auth-log"
@@ -25,7 +22,7 @@ const alertMessage = ref('');
 const alertVisible = ref(false);
 const alertType = ref('success');
 const loadings = ref(false);
-const { result, loading, error ,refetch} = useQuery(GET_USER_BY_HIS_ID, { id: userid.value });
+const { result, loading, error ,refetch} = useQuery(GET_USER_BY_HIS_ID);
 const {mutate:insertImage}=useMutation(insert_image_imageTable)
 const { mutate: uploadBase64Image } = useMutation(upload_image_action);
 const onFileChange = (event) => {
@@ -77,6 +74,7 @@ const showAlert = (message, type = 'success') => {
 };
 // Form submission logic
 const onSubmit = async (values) => {
+       loading.value=true
   try {
   
     if (selectedImages.value.length === 0) {
@@ -99,7 +97,7 @@ const onSubmit = async (values) => {
       if (data && data.uploadBase64Image && data.uploadBase64Image.url) {
         return data.uploadBase64Image.url;
       } else {
-        throw new Error('Image upload failed');
+        showAlert('Image upload failed',"error")
       }
     });
 
@@ -117,7 +115,7 @@ const onSubmit = async (values) => {
       category: values.category,
       featured_image: imageUrls.value[0],
       tags: values.tags,
-      user_id: userid.value
+      user_id: String(userid.value)
     });
      const eventId = ref(response.data.insert_events.returning[0].id);
      const imagePromises = imageUrls.value.map(url => 
@@ -139,12 +137,17 @@ const onSubmit = async (values) => {
     showAlert('Failed to create event.', 'error');
 
   }
+  finally{
+    loading.value=false
+  }
 };
 </script>
 <template>
   <div class="flex flex-col mt-20">
     <h1 class="text-3xl text-center">Create an Event</h1>
-    <AlertMessage :message="alertMessage" :type="alertType" :visible="alertVisible" />
+    <p v-if="loading">Loading...</p>
+    <div v-else>
+      <AlertMessage :message="alertMessage" :type="alertType" :visible="alertVisible" />
 
     <Form @submit="onSubmit" :validation-schema="toFieldValidator(schema)" class="max-w-2xl mx-auto p-8 bg-white shadow-md rounded-lg">
       <div class="mb-6">
@@ -273,5 +276,7 @@ const onSubmit = async (values) => {
         Create Event
       </button>
     </Form>
+    </div>
+    
   </div>
 </template>

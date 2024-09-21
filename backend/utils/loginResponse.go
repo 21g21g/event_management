@@ -8,7 +8,6 @@ import (
 	"net/http"
 )
 
-// SendJSONResponses sends a well-structured JSON response
 func SendJSONResponses(w http.ResponseWriter, statusCode int, response interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)

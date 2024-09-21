@@ -162,8 +162,8 @@ mutation EventUpdate(
 `;
 
 export const GET_USER_BY_HIS_ID=gql`
-query userbyId($id:uuid!){
-  users_by_pk(id:$id){
+query{
+  users{
     username
     events{
       id
@@ -178,14 +178,34 @@ query userbyId($id:uuid!){
       tags
       featured_image
     }
-  }
+   
+    }
+  }`;
+// export const GET_USER_BY_HIS_ID=gql`
+// query userbyId($id:uuid!){
+//   users_by_pk(id:$id){
+//     username
+//     events{
+//       id
+//       title
+//       description
+//       address
+//       venue
+//       price
+//       specific_price
+//       preparation_date
+//       category
+//       tags
+//       featured_image
+//     }
+//   }
   
-}`;
+// }`;
 
 
 export const DELETE_EVENT_BY_ID=gql`
-mutation DeleteEvent($id:uuid!){
-  delete_events_by_pk(id:$id){
+mutation DeleteEvent($id: uuid!) {
+  delete_events_by_pk(id: $id){
     id
   }
 }`;
@@ -327,12 +347,35 @@ mutation bookMark($user_id: uuid!, $event_id: uuid!,$isbookMarked:Boolean!) {
 
 `;
 
+// export const GET_BOOK_MARK_BY_USER_ID=gql`
+// query{
+//   bookmarks{
+//     id
+//     isbookMarked
+//     event{
+//         id
+//       title
+//       description
+//       address
+//       venue
+//       specific_price
+//       tags
+//       category
+//       featured_image
+//       price
+//       preparation_date
+//     }
+//   }
+// }
+// `;
+
 export const GET_BOOK_MARK_BY_USER_ID=gql`
-query getBookMark($user_id:uuid!){
-  bookmarks(where:{user_id:{_eq:$user_id}}){
+query{
+  bookmarks{
     id
+    isbookMarked
     event{
-      id
+       id
       title
       description
       address
@@ -345,7 +388,6 @@ query getBookMark($user_id:uuid!){
       preparation_date
       
     }
-    
   }
 }`;
 
@@ -416,9 +458,21 @@ mutation insertTicket($user_id:uuid!,$event_id:uuid!,$quantity:Int!,$catchedTick
 }
 `;
 
+// export const GET_TICKET_USER=gql`
+// query{
+//   tickets{
+//     catchedTicket
+//     quantity
+//     id
+//     event{
+//       title
+//       preparation_date
+//     }
+//   }
+// }`;
 export const GET_TICKET_USER=gql`
-query getTicket($user_id:uuid!){
-  tickets(where:{user_id:{_eq:$user_id}}){
+query getTicket($user_id:uuid!,$event_id:uuid!){
+  tickets(where:{user_id:{_eq:$user_id},event_id:{_eq:$event_id}}){
     id
     catchedTicket
     user_id
@@ -432,6 +486,29 @@ query getTicket($user_id:uuid!){
   }
   
 }
+`;
+export const GET_TICKET_USER_BY_USER_ID=gql`
+query{
+  tickets{
+    id
+    quantity
+    catchedTicket
+    event{
+      id
+      featured_image
+      title
+      description
+    address
+      venue
+      category
+      tags
+      specific_price
+      preparation_date
+      price
+    }
+  }
+}
+
 `;
 
 export const REMOVE_BOOKMARK_FROM_FAVOURITE=gql`

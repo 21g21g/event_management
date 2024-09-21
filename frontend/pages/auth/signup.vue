@@ -47,11 +47,13 @@ const signupRegister = async () => {
      console.log('Mutation response:', data);
     if (data && data.signUp) {
       successMessage.value = data.signUp.message;
-          // showAlert(data.signUp.message, 'success');
+       showAlert(data.signUp.message, 'success');
 
       
       // Reset form and validation state
+      
       resetForm();
+     
 
       // Wait for 3 seconds, then redirect to login page
       setTimeout(() => {
@@ -128,8 +130,6 @@ const schema = z.object({
       </button>
       <p class="font-semibold p-3 text-left">Do You have an account?<NuxtLink to="/auth/login" class="text-blue-600">Login</NuxtLink></p>
     </Form>
-    <div v-if="successMessage" class="text-green-600">
-      {{ successMessage }}
-    </div>
+   
   </div>
 </template>
