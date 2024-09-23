@@ -161,20 +161,23 @@ onMounted(async () => {
         <AlertMessage :message="alertMessage" :type="alertType" :visible="alertVisible" />
 
         <div class="relative">
-          <v-carousel :items-to-show="1" class="rounded-lg">
-            <v-carousel-item
-              v-for="(item, i) in eventData.imagestores"
-              :key="i"
-              class="flex items-center justify-center"
-            >
-              <img
-              
-                :src="item.url"
-                :alt="item.alt"
-                class="object-cover w-full h-72 rounded-lg"
-              />
-            </v-carousel-item>
-          </v-carousel>
+       <v-carousel v-if="eventData?.imagestores && eventData.imagestores.length > 0" :items-to-show="1" class="rounded-lg">
+  <v-carousel-item
+    v-for="(item, i) in eventData.imagestores"
+    :key="i"
+    class="flex items-center justify-center"
+  >
+    <img
+      :src="item.url"
+      :alt="item.alt"
+      class="object-cover w-full h-72 rounded-lg"
+    />
+  </v-carousel-item>
+</v-carousel>
+<div v-else>
+  
+  <p>Loading images...</p>
+</div>
 
           <Heart
             @click="toggleBookmark"
@@ -226,7 +229,7 @@ onMounted(async () => {
         <!-- Map Section -->
         <div class="bg-white shadow-lg rounded-lg p-6">
           <h2 class="text-xl font-semibold mb-4">Event Location</h2>
-          <Map class="w-full h-72 rounded-lg shadow-sm"  :address="eventData.address"/>
+          <Map class="w-full h-72 rounded-lg shadow-sm"  :address="eventData?.address"/>
         </div>
       </div>
     </div>

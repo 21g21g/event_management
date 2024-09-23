@@ -51,8 +51,7 @@ onMounted(()=>{
 })
 </script>
 <template>
-   
-  <div class="bookmarks-list max-w-xl mx-auto p-5 bg-white  rounded-lg mt-20 gap-1">
+  <div class="bookmarks-list max-w-4xl mx-auto p-5 bg-white rounded-lg shadow-md mt-20 gap-4">
     <AlertMessage :message="alertMessage" :type="alertType" :visible="alertVisible" />
 
     <div v-if="loading" class="text-center text-gray-500">Loading...</div>
@@ -60,36 +59,33 @@ onMounted(()=>{
     <div v-else-if="error" class="text-center text-red-500">There is an error fetching your bookmarks.</div>
     
     <div v-else-if="EventData.length === 0" class="text-center text-red-600">No bookmarks found.</div>
-         <div  v-else>
-
-           <div 
-         
-          v-for="event in EventData" 
-          :key="event.id"
-          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 ease-in-out"
+    
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div 
+        v-for="event in EventData" 
+        :key="event.id"
+        class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 ease-in-out"
+      >
+        <div class="relative">
+          <img :src="event?.event.featured_image" alt="Event image" class="w-full h-48 object-cover"/>
+          <Unfav class="absolute top-3 right-2 cursor-pointer" 
+                 @click="unMarked(event.id)" 
+                 @mouseover="setHovered(event.id, true)" 
+                 @mouseleave="setHovered(event.id, false)"/>
+          <span 
+            v-if="hoverStates[event.id]" 
+            class="absolute top-16 right-2 bg-gray-800 text-white text-sm px-2 py-1 rounded-md shadow-lg"
           >
-          <div class="relative">
-            
-              <img :src="event?.event.featured_image" alt="Event image" class="w-full h-48 object-cover"/>
-              <Unfav class=" absolute top-3 right-2" @click="unMarked(event.id)" 
-              @mouseover="setHovered(event.id, true)" 
-              @mouseleave="setHovered(event.id, false)"/>
-               <span 
-                  v-if="hoverStates[event.id]" 
-               class="absolute top-16 right-2 bg-gray-800 text-white text-sm px-2 py-1 rounded-md shadow-lg"
-                >
-                Unmark
-            </span>
-                 </div>
-            
-            <div class="p-4">
-             <p class="text-lg font-semibold text-gray-800 mb-2">Event Name: {{event?.event.title}}</p>
-            <p class="text-sm font-semibold text-gray-600">Location: {{event?.event.address}}</p>
-            <p class="text-sm font-semibold text-gray-600">Preparation Date: For {{event?.event.preparation_date}}</p>
-          </div>
-           
+            Unmark
+          </span>
         </div>
+        
+        <div class="p-4">
+          <p class="text-lg font-semibold text-gray-800 mb-2">Event Name: {{event?.event.title}}</p>
+          <p class="text-sm font-semibold text-gray-600">Location: {{event?.event.address}}</p>
+          <p class="text-sm font-semibold text-gray-600">Preparation Date: For {{event?.event.preparation_date}}</p>
+        </div>
+      </div>
     </div>
-  
   </div>
 </template>

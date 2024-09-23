@@ -11,7 +11,7 @@ import allLocation from "../components/homecomponents/allLocation.vue"
    <div class="bg-yellow-50">
        <homecover/>
        <eventCatagory/>  
-       <allLocation />
+       <allLocation /> 
        
    </div> 
 </template>

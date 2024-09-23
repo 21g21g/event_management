@@ -83,6 +83,8 @@ const schema = z.object({
         <AlertMessage :message="alertMessage" :type="alertType" :visible="alertVisible" />
 
     <Form @submit="signupRegister" :validation-schema="toFieldValidator(schema)" class="flex flex-col justify-center items-center w-full max-w-md p-6 bg-white rounded-lg">
+            <h1 class="font-bold text-2xl mb-4 text-gray-800">SignUp Page</h1>
+
       <div class="flex flex-col w-full mb-4">
         <label class="font-semibold text-gray-600 mb-2">User Name</label>
         <Field 

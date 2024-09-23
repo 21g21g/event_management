@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -25,9 +26,9 @@ type SignInRequest struct {
 }
 
 type JWTSecret struct {
-	Type            string `json:"type"`
-	Key             string `json:"key"`
-	ClaimsNamespace string `json:"claims_namespace"`
+	Type string `json:"type"`
+	Key  string `json:"key"`
+	// ClaimsNamespace string `json:"claims_namespace"`
 }
 
 var (
@@ -50,6 +51,8 @@ func init() {
 	if err := json.Unmarshal([]byte(jwtSecretEnv), &jwtSecret); err != nil {
 		log.Fatalf("Error parsing HASURA_GRAPHQL_JWT_SECRET: %v", err)
 	}
+	fmt.Printf("Loaded JWT Secret: Type: %s, Key: %s\n", jwtSecret.Type, jwtSecret.Key)
+
 	jwtSecretKey = []byte(jwtSecret.Key)
 
 	hasuraURL := "http://graphql-engine:8080/v1/graphql"
@@ -129,8 +132,8 @@ func LoginUser(email, password string) (string, error) {
 		} `json:"users"`
 	}
 
-	ctx := context.Background()
-	if err := RunGraphQLQuery(ctx, req, &respData); err != nil {
+	ctx := context.Background() //this is used for cancelation and deadlines for requests.
+	if err := service.RunGraphQLQuery(ctx, req, &respData); err != nil {
 		return "", err
 	}
 
@@ -154,6 +157,7 @@ func LoginUser(email, password string) (string, error) {
 }
 
 func generateJWT(userID string) (string, error) {
+	//this used for what looks like the generated token is?.
 	claims := jwt.MapClaims{
 		"https://hasura.io/jwt/claims": map[string]interface{}{
 			"x-hasura-allowed-roles": []string{"user", "admin", "anonymous"},
@@ -173,9 +177,9 @@ func generateJWT(userID string) (string, error) {
 	return tokenString, nil
 }
 
-func RunGraphQLQuery(ctx context.Context, req *graphql.Request, respData interface{}) error {
-	if err := client.Run(ctx, req, respData); err != nil {
-		return err
-	}
-	return nil
-}
+// func RunGraphQLQuery(ctx context.Context, req *graphql.Request, respData interface{}) error {
+// 	if err := client.Run(ctx, req, respData); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }

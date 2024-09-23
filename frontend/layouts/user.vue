@@ -12,7 +12,7 @@ import UserSidebar from "../components/userlayout/UserSidebar.vue";
        </aside>
      
          <div class="flex flex-col w-full">
-          <header  class="bg-slate-50 text-white  w-full fixed  h-16">
+          <header  class="bg-slate-50 text-white  w-full fixed z-50 h-16">
           <UserNavbar/>
         </header>
     <hr/>

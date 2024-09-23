@@ -6,22 +6,25 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 )
 
-// CLOUDINARY_NAME=dnfl1adwg
-// API_SECRETE=jA7hxyvp$J3mz@i
-// API_KEY=988944114923561
-
 var cld *cloudinary.Cloudinary
 
 func init() {
-
 	var err error
-	cld, err = cloudinary.NewFromParams("dnfl1adwg", "988944114923561", "_ejh9K0mvcD-o6P2nedgE7XUWV4")
+
+	// Load Cloudinary parameters from environment variables
+
+	cloudinaryName := os.Getenv("CLOUDINARY_NAME")
+	cloudinaryAPIKey := os.Getenv("CLOUDINARY_API_KEY")
+	cloudinaryAPISecret := os.Getenv("CLOUDINARY_API_SECRET")
+
+	cld, err = cloudinary.NewFromParams(cloudinaryName, cloudinaryAPIKey, cloudinaryAPISecret)
 	if err != nil {
 		log.Fatalf("Failed to create Cloudinary instance: %v", err)
 	}

@@ -57,9 +57,11 @@ const onSubmit = async () => {
       email: user.value.email,
       password: user.value.password,
     });
+    console.log(data)
 
     if (data && data.siginUser && data.siginUser.token) {
       const token = data.siginUser.token;
+      console.log(token)
       localStorage.setItem('token', token);
       const userId = getUserIdFromToken(token);
       if (userId) {

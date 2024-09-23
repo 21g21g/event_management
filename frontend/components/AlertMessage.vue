@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" :class="alertClass" class="fixed top-16 right-4 px-6 py-4 rounded shadow-lg transition-all z-50">
+  <div v-if="visible" :class="alertClass" class="fixed top-20 right-4 px-6 py-4 rounded shadow-lg transition-all z-50">
    <p>{{ message }}</p>
   </div>
 </template>

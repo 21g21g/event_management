@@ -37,7 +37,7 @@ const formData = ref({
   price: 'free',
   specificPrice: 0,
   preparationDate: '',
-  category: '',
+  category: 'Food',
   tags: ''
 });
 
