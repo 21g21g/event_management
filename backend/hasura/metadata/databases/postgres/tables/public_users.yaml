@@ -75,7 +75,7 @@ delete_permissions:
           _eq: X-Hasura-User-Id
     comment: ""
 event_triggers:
-  - name: wellcome_message
+  - name: wellcome_email
     definition:
       enable_manual: false
       insert:
