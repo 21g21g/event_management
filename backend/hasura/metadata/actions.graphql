@@ -19,12 +19,6 @@ type Mutation {
   ): ImageResponse
 }
 
-type Mutation {
-  uploadImages(
-    images: [String!]!
-  ): ImageUploadResponse!
-}
-
 input LoginInput {
   email: String!
   password: String!

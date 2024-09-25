@@ -8,11 +8,14 @@ object_relationships:
 insert_permissions:
   - role: user
     permission:
-      check: {}
+      check:
+        event:
+          user_id:
+            _eq: X-Hasura-User-Id
       columns:
-        - url
         - event_id
         - id
+        - url
     comment: ""
 select_permissions:
   - role: anonymous
@@ -30,20 +33,25 @@ select_permissions:
         - event_id
         - id
       filter:
-        id:
-          _eq: X-Hasura-User-Id
+        event:
+          user_id:
+            _eq: X-Hasura-User-Id
     comment: ""
 update_permissions:
   - role: user
     permission:
       columns: []
-      filter: {}
+      filter:
+        event:
+          user_id:
+            _eq: X-Hasura-User-Id
       check: null
     comment: ""
 delete_permissions:
   - role: user
     permission:
       filter:
-        id:
-          _eq: X-Hasura-User-Id
+        event:
+          user_id:
+            _eq: X-Hasura-User-Id
     comment: ""

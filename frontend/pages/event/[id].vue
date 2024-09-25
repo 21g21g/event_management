@@ -5,21 +5,20 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import Heart from '../../assets/icons/Heart.vue';
 import { GET_EVENT_BY_ID, USER_MAKE_BOOK_MARK, GET_BOOK_MARKED_EVENT, CATCH_TICKET, GET_TICKET_USER } from '../../utils/queries';
-import { useAuthStore } from '../../stores/authstore';
 import AlertMessage from '../../components/AlertMessage.vue';
 import Map from "../../components/homecomponents/Map.vue";
 
-definePageMeta({
-  middleware: "after-log"
-});
+// definePageMeta({
+//   middleware: "after-log"
+// });
 
-const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 const id = ref(route.params.id);
+console.log(id)
 const isBookmarked = ref(false);
 const isTicket = ref(false);
-const user_id = ref(localStorage.getItem("userId"));
+// const user_id = ref(localStorage.getItem("userId"));
 const alertMessage = ref('');
 const alertVisible = ref(false);
 const alertType = ref('success');
@@ -54,7 +53,7 @@ const showAlert = (message, type = 'success') => {
   }, 3000);
 };
 
-const { result: ticketResult, loading: ticketLoading, error: ticketError, refetch: ticketRefetch } = useQuery(GET_TICKET_USER, { user_id: String(user_id.value), event_id: String(id.value) });
+const { result: ticketResult, loading: ticketLoading, error: ticketError, refetch: ticketRefetch } = useQuery(GET_TICKET_USER, { event_id: String(id.value) });
 
 const reserveTicket = async () => {
   if (!localStorage.getItem('token')) {
@@ -68,7 +67,7 @@ const reserveTicket = async () => {
   if (isTicket.value === false) {
     try {
       await ticket({
-        user_id: String(user_id.value),
+        // user_id: String(user_id.value),
         event_id: String(id.value),
         quantity: count.value,
         catchedTicket: true
@@ -76,7 +75,7 @@ const reserveTicket = async () => {
       showAlert(`You reserved ${count.value} tickets.`, 'success');
       localStorage.setItem('recentlyTicketed', 'true');
       setTimeout(() => {
-        router.replace("/user/ticketView");
+        router.push("/user/ticketView");
       }, 4000);
     } catch (error) {
       console.log('Unexpected error:', error);
@@ -85,12 +84,12 @@ const reserveTicket = async () => {
   } else {
     showAlert('You have already caught a ticket for this event!', 'success');
     setTimeout(() => {
-      router.replace('/user/ticketView');
+      router.push('/user/ticketView');
     }, 4000);
   }
 };
 
-const { result: bookmarkResult, loading: bookmarkLoading, error: bookmarkError, refetch: bookRefetch } = useQuery(GET_BOOK_MARKED_EVENT, { user_id: String(user_id.value), event_id: String(id.value) });
+const { result: bookmarkResult, loading: bookmarkLoading, error: bookmarkError, refetch: bookRefetch } = useQuery(GET_BOOK_MARKED_EVENT, { event_id: String(id.value) });
 const toggleBookmark = async () => {
   if (!localStorage.getItem('token')) {
     showAlert("First you must be logged in!", "info");
@@ -103,14 +102,14 @@ const toggleBookmark = async () => {
   if (isBookmarked.value === false) {
     try {
       await bookMark({
-        user_id: String(user_id.value),
+        // user_id: String(user_id.value),
         event_id: String(id.value),
         isbookMarked: true
       });
       showAlert('Event bookmarked successfully!', 'success');
       localStorage.setItem('recentlyBookmarked', 'true');
       setTimeout(() => {
-        router.replace('/user/bookMark');
+        router.push('/user/bookMark');
       }, 2000);
     } catch (error) {
       console.log('Unexpected error:', error);
@@ -119,7 +118,7 @@ const toggleBookmark = async () => {
   } else {
     showAlert('You have already bookmarked this event!', 'success');
     setTimeout(() => {
-      router.replace('/user/bookMark');
+      router.push('/user/bookMark');
     }, 2000);
   }
 };
@@ -162,11 +161,11 @@ onMounted(async () => {
 
         <div class="relative">
        <v-carousel v-if="eventData?.imagestores && eventData.imagestores.length > 0" :items-to-show="1" class="rounded-lg">
-  <v-carousel-item
-    v-for="(item, i) in eventData.imagestores"
-    :key="i"
-    class="flex items-center justify-center"
-  >
+     <v-carousel-item
+      v-for="(item, i) in eventData.imagestores"
+       :key="i"
+         class="flex items-center justify-center"
+      >
     <img
       :src="item.url"
       :alt="item.alt"

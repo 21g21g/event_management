@@ -103,6 +103,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 
 	email := reqBody.Input.Email
 	password := reqBody.Input.Password
+	log.Printf("email: %+v, password: %+v\n", email, password)
 
 	token, err := LoginUser(email, password)
 	if err != nil {
@@ -138,6 +139,7 @@ func LoginUser(email, password string) (string, error) {
 	}
 
 	if len(respData.Users) == 0 {
+
 		return "", errors.New("invalid email or password")
 	}
 
@@ -160,9 +162,8 @@ func generateJWT(userID string) (string, error) {
 	//this used for what looks like the generated token is?.
 	claims := jwt.MapClaims{
 		"https://hasura.io/jwt/claims": map[string]interface{}{
-			"x-hasura-allowed-roles": []string{"user", "admin", "anonymous"},
-			"x-hasura-default-role":  "anonymous",
-			"x-hasura-role":          "user",
+			"x-hasura-allowed-roles": []string{"user", "admin"},
+			"x-hasura-default-role":  "user",
 			"x-hasura-user-id":       userID,
 		},
 		"exp": time.Now().Add(24 * time.Hour).Unix(),

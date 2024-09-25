@@ -60,7 +60,7 @@ export const insert_event = gql`
     $category: String!,
     $featured_image: String!,
     $tags: [String!],
-    $user_id: uuid!
+  
   ) {
     insert_events(
       objects: {
@@ -74,7 +74,6 @@ export const insert_event = gql`
         category: $category,
         tags: $tags,
         featured_image: $featured_image,
-        user_id: $user_id
       }
     ) {
       returning {
@@ -273,6 +272,8 @@ query getEvent($search:String!,$limit:Int!,$offset:Int!){
   }
 }
 `;
+
+//this is inorder to get all events for anonymous and for succesful login users.
 export const GET_ALL_EVENTS_WTHOUT_FILTER=gql`
 
 query{
@@ -289,7 +290,7 @@ query{
     category
     tags
     user{
-      username
+      id
     }
     
     
@@ -312,7 +313,7 @@ query getEvent($category:String!){
     preparation_date
   }
 }`;
-
+// get a single event by its id.
 export const GET_EVENT_BY_ID=gql`
 query getEventById($id:uuid!){
   events_by_pk(id:$id){
@@ -335,10 +336,10 @@ query getEventById($id:uuid!){
     
   }
 }`;
-
+//to make the events bookmark.
 export const USER_MAKE_BOOK_MARK=gql`
-mutation bookMark($user_id: uuid!, $event_id: uuid!,$isbookMarked:Boolean!) {
-  insert_bookmarks_one(object: {user_id:$user_id,event_id:$event_id,isbookMarked:$isbookMarked}){
+mutation bookMark($event_id: uuid!,$isbookMarked:Boolean!) {
+  insert_bookmarks_one(object: {event_id:$event_id,isbookMarked:$isbookMarked}){
     id
     
     
@@ -369,6 +370,7 @@ mutation bookMark($user_id: uuid!, $event_id: uuid!,$isbookMarked:Boolean!) {
 // }
 // `;
 
+//this query is inorder to get bookmark by user_id.
 export const GET_BOOK_MARK_BY_USER_ID=gql`
 query{
   bookmarks{
@@ -391,6 +393,7 @@ query{
   }
 }`;
 
+//this is inorder to make search functionality from the backend.
 export const SEARCH_TERMS=gql`
 query searchItems($search: String, $category: String!, $limit: Int) {
   events_aggregate(where: {
@@ -440,18 +443,22 @@ query searchItems($search: String, $category: String!, $limit: Int) {
 }
 `;
 
+
+//this query is inorder to get single bookmarked event by user and eventid.
 export const GET_BOOK_MARKED_EVENT=gql`
-query getBookmark($user_id:uuid!,$event_id:uuid!){
-  bookmarks(where:{user_id:{_eq:$user_id},event_id:{_eq:$event_id}}){
+query getBookmark($event_id:uuid!){
+  bookmarks(where:{event_id:{_eq:$event_id}}){
     isbookMarked
   }
     
   }
 `;
 
+
+// this query is inorder to catch ticket.
 export const CATCH_TICKET=gql`
-mutation insertTicket($user_id:uuid!,$event_id:uuid!,$quantity:Int!,$catchedTicket:Boolean!){
-  insert_tickets_one(object:{user_id:$user_id,event_id:$event_id,quantity:$quantity,catchedTicket:$catchedTicket}){
+mutation insertTicket($event_id:uuid!,$quantity:Int!,$catchedTicket:Boolean!){
+  insert_tickets_one(object:{event_id:$event_id,quantity:$quantity,catchedTicket:$catchedTicket}){
      id
   
   }
@@ -470,9 +477,12 @@ mutation insertTicket($user_id:uuid!,$event_id:uuid!,$quantity:Int!,$catchedTick
 //     }
 //   }
 // }`;
+
+
+// this query is inorder to get single ticket that a user created in a single event.
 export const GET_TICKET_USER=gql`
-query getTicket($user_id:uuid!,$event_id:uuid!){
-  tickets(where:{user_id:{_eq:$user_id},event_id:{_eq:$event_id}}){
+query getTicket($event_id:uuid!){
+  tickets(where:{event_id:{_eq:$event_id}}){
     id
     catchedTicket
     user_id
@@ -487,6 +497,8 @@ query getTicket($user_id:uuid!,$event_id:uuid!){
   
 }
 `;
+
+// this is inorder to get tickets that a user created.
 export const GET_TICKET_USER_BY_USER_ID=gql`
 query{
   tickets{

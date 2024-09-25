@@ -11,40 +11,21 @@ export default defineNuxtPlugin(nuxtApp => {
       return forward(operation);
     }
 
-    // Retrieve token from localStorage
     const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
     console.log('Token retrieved:', token);
-    console.log('User ID retrieved:', userId);
 
 
-    // Set the headers for each request
     if(token){
        operation.setContext({
       
       headers: {
-        
-        Authorization: token ? `Bearer ${token}` : '',
-        'x-hasura-admin-secret': nuxtApp.$config.public.hasuraAdminSecret,
+        Authorization: `Bearer ${token}`,
         'x-hasura-role': 'user',
-         'x-hasura-user-id': userId
         
       },
     });
     }
-    else{
-      operation.setContext({
-      
-        headers: {
-          
-          Authorization: token ? `Bearer ${token}` : '',
-          'x-hasura-admin-secret': nuxtApp.$config.public.hasuraAdminSecret,
-         
-          
-        },
-      });
-      }
-    
+   
    
 
     return forward(operation);

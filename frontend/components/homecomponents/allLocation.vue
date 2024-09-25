@@ -1,4 +1,3 @@
-
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useQuery } from '@vue/apollo-composable';
@@ -10,26 +9,39 @@ const search = ref('');
 const limit = ref(6);
 const offset = ref(0); 
 const totalEvents = ref(0); 
+const errorMsg = ref('');  // Error message to handle any API error
 
 const { result, loading, error, refetch } = useQuery(GET_ALL_EVENTS, {
   search: "%", 
   limit: limit.value,
-  offset: offset.value
+  offset: offset.value,
 });
 
 const eventData = computed(() => {
   return result.value?.events || [];
 });
+console.log(eventData)
 
-watch([search, limit], () => {
+watch([search, limit], async() => {
   offset.value = 0; 
-  fetchEvents();
+ await fetchEvents();
 });
 
-const fetchEvents = async () => {
-  let searchQuery = search.value.trim() === "" ? "%" : `%${search.value}%`;
-  const { data } = await refetch({ search: searchQuery, limit: limit.value, offset: offset.value });
-  totalEvents.value = data.events.length;
+const fetchEvents =  () => {
+  try {
+    let searchQuery = search.value.trim() === "" ? "%" : `%${search.value}%`;
+    const { data } =  refetch({ search: searchQuery, limit: limit.value, offset: offset.value });
+    
+    if (data && data.events) {
+      totalEvents.value = data.events.length;
+      errorMsg.value = ''; // Reset error message on successful fetch
+    } else {
+      throw new Error('Failed to fetch events data');
+    }
+  } catch (err) {
+    console.error('Error fetching events:', err);
+    errorMsg.value = 'Error fetching events. Please try again later.';
+  }
 };
 
 const filteredData = computed(() => {
@@ -44,17 +56,17 @@ const canShowLess = computed(() => {
   return limit.value > 6 && !loading.value;
 });
 
-const showMore = () => {
+const showMore = async () => {
   offset.value = limit.value; 
   limit.value += 4; 
-  fetchEvents();
+  await fetchEvents();
 };
 
-const showLess = () => {
+const showLess = async () => {
   if (limit.value > 6) {
     limit.value -= 4; 
     offset.value = limit.value - 4;
-    fetchEvents();
+    await fetchEvents();
   }
 };
 
@@ -63,8 +75,8 @@ const detailPage = (id) => {
   router.push(`/event/${id}`);
 };
 
-onMounted(() => {
-  fetchEvents();
+onMounted(async () => {
+  await fetchEvents();
 });
 </script>
 

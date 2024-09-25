@@ -1,9 +1,9 @@
 <script setup>
 import { computed } from "vue"
 import { useRoute } from 'vue-router';
-definePageMeta({
-  middleware:"after-log"
-})
+// definePageMeta({
+//   middleware:"after-log"
+// })
 const route=useRoute()
 import catagoryDetailHome from "../components/catagory/catagoryDetailHome.vue"
 import coverpageBanner from "../components/catagory/coverpageBanner.vue"

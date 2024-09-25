@@ -5,7 +5,6 @@ const props=defineProps({
 const { category } = props;
 
 import { computed, onMounted, ref, watch } from "vue"
-import {DummyUser} from "../dummy"
 import { useRouter, useRoute } from 'vue-router';
 import { useQuery } from "@vue/apollo-composable";
 const search=ref("")
@@ -58,10 +57,11 @@ const handleClick=(id)=>{
   router.push(`event/${id}`,{params:{id}})
 }
 onMounted(() => {
-  refetch();
+ 
   if (result.value?.events_aggregate) {
     totalEvents.value = result.value.events_aggregate.aggregate.count;
   }
+   refetch();
 });
 </script>
 

@@ -4,14 +4,29 @@ import (
 	"context"
 	"errors"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/machinebox/graphql"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var client = graphql.NewClient("http://graphql-engine:8080/v1/graphql")
 
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+
+	}
+	adminSecret := os.Getenv("HASURA_GRAPHQL_ADMIN_SECRET")
+	log.Printf("Admin secret loaded: %s\n", adminSecret)
+
+}
+
 func RunGraphQLQuery(ctx context.Context, userQuery *graphql.Request, userResp interface{}) error {
+
+	userQuery.Header.Set("X-Hasura-Admin-Secret", os.Getenv("HASURA_GRAPHQL_ADMIN_SECRET"))
 
 	err := client.Run(ctx, userQuery, userResp)
 	if err != nil {
@@ -27,11 +42,11 @@ func UserExists(email string) (bool, error) {
 	req := graphql.NewRequest(`
 	query user($email:String!){
 		users(where:{email:{_eq:$email}}){
-		  id
-		  email
+	id
 		}
 	  }
     `)
+
 	req.Var("email", email)
 
 	var respData struct {
@@ -68,7 +83,7 @@ func RegisterUser(username, email, password string) error {
 	mutation registerUser($email:String!,$username:String!,$password:String!){
 		insert_users(objects:{email:$email,username:$username,password:$password}){
 		  returning{
-			username
+			id
 		  }
 		}
 	  }

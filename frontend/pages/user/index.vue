@@ -5,7 +5,6 @@
 
 });
 import { onMounted, ref } from 'vue';
-import { useAuthStore } from '../../stores/authstore';
 import { GET_USER_BY_HIS_ID } from "../../utils/queries";
 import {Update_Event_ById} from "../../utils/queries"
 import {DELETE_EVENT_BY_ID} from "../../utils/queries"
@@ -13,8 +12,6 @@ import { useQuery, useMutation } from '@vue/apollo-composable';
 const show = ref(false);
 const popup=ref(false)
 const selectedEventId=ref(null)
-const authStore = useAuthStore();
-const userid = ref(authStore.userId);
 const { result, loading, error ,refetch} = useQuery(GET_USER_BY_HIS_ID);
 const {mutate:updateEvent}=useMutation(Update_Event_ById)
 const {mutate:deleteEvent}=useMutation(DELETE_EVENT_BY_ID)

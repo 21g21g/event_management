@@ -7,9 +7,10 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     "vuetify-nuxt-module",
     '@nuxt/icon',
-    '@pinia/nuxt'
+
   ],
   
+
  
   plugins: [
     './plugins/apollo.client.ts'
@@ -26,6 +27,7 @@ export default defineNuxtConfig({
       /* vuetify options */
     }
   },
+  
   vite: {
   
     server:{
@@ -37,11 +39,11 @@ export default defineNuxtConfig({
    
   },
   
-  ssr:true,
-  runtimeConfig:{
-    public:{
-      hasuraAdminSecret:process.env.HASURA_ADMIN_SECRET
-    }
-  }
+  // ssr:true,
+  // runtimeConfig:{
+  //   public:{
+  //     hasuraAdminSecret:process.env.HASURA_ADMIN_SECRET
+  //   }
+  // }
   
   })

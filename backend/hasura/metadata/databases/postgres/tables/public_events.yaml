@@ -31,63 +31,60 @@ insert_permissions:
   - role: user
     permission:
       check: {}
+      set:
+        user_id: x-hasura-user-id
       columns:
-        - images
-        - tags
-        - preparation_date
-        - specific_price
         - address
         - category
         - description
         - featured_image
+        - id
+        - images
+        - preparation_date
         - price
+        - specific_price
+        - tags
         - title
         - venue
-        - created_at
-        - updated_at
-        - id
-        - user_id
     comment: ""
 select_permissions:
   - role: anonymous
     permission:
       columns:
-        - images
-        - tags
-        - preparation_date
-        - specific_price
         - address
         - category
         - description
         - featured_image
-        - price
-        - title
-        - venue
-        - created_at
-        - updated_at
         - id
+        - images
+        - preparation_date
+        - price
+        - specific_price
+        - tags
+        - title
         - user_id
+        - venue
       filter: {}
+      allow_aggregations: true
     comment: ""
   - role: user
     permission:
       columns:
-        - images
-        - tags
-        - preparation_date
-        - specific_price
         - address
         - category
         - description
         - featured_image
-        - price
-        - title
-        - venue
-        - created_at
-        - updated_at
         - id
+        - images
+        - preparation_date
+        - price
+        - specific_price
+        - tags
+        - title
         - user_id
+        - venue
       filter: {}
+      allow_aggregations: true
     comment: ""
 update_permissions:
   - role: user

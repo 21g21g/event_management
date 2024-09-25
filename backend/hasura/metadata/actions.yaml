@@ -9,6 +9,7 @@ actions:
         template_engine: Kriti
         version: 2
     permissions:
+      - role: anonymous
       - role: user
   - name: signUp
     definition:
@@ -21,7 +22,6 @@ actions:
         version: 2
     permissions:
       - role: anonymous
-      - role: user
   - name: uploadBase64Image
     definition:
       kind: synchronous
@@ -32,19 +32,6 @@ actions:
         template_engine: Kriti
         version: 2
     permissions:
-      - role: anonymous
-      - role: user
-  - name: uploadImages
-    definition:
-      kind: synchronous
-      handler: http://backend:4000/upload
-      request_transform:
-        method: POST
-        query_params: {}
-        template_engine: Kriti
-        version: 2
-    permissions:
-      - role: anonymous
       - role: user
 custom_types:
   enums: []

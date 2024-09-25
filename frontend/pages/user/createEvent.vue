@@ -6,6 +6,7 @@ import { toFieldValidator } from '@vee-validate/zod';
 import { z } from 'zod';
 import { useMutation,useQuery } from '@vue/apollo-composable';
 import {insert_event_mutation} from "../../utils/queries"
+import {insert_event} from "../../utils/queries"
 import {GET_USER_BY_HIS_ID} from "../../utils/queries"
 import {insert_image_imageTable} from "../../utils/queries"
 import { upload_image_action } from "../../utils/queries";
@@ -63,7 +64,7 @@ const setImageUrls = (urls) => {
 // Mutation for inserting the event
 
 
-const { mutate: insertEvent } = useMutation(insert_event_mutation);
+const { mutate: insertEvent } = useMutation(insert_event);
 const showAlert = (message, type = 'success') => {
   alertMessage.value = message;
   alertType.value = type;
@@ -115,9 +116,10 @@ const onSubmit = async (values) => {
       category: values.category,
       featured_image: imageUrls.value[0],
       tags: values.tags,
-      user_id: String(userid.value)
+      // user_id: String(userid.value)
     });
      const eventId = ref(response.data.insert_events.returning[0].id);
+     console.log(eventId)
      const imagePromises = imageUrls.value.map(url => 
       insertImage({
         url: url,

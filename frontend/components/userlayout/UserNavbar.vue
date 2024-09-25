@@ -4,13 +4,11 @@
 import { ref, watch, computed } from 'vue';
 import Avater from '../../assets/icons/Avater.vue';
 import Toogle from "../../assets/icons/Toogle.vue";
-import { useAuthStore } from "../../stores/authstore";
 import { useQuery } from "@vue/apollo-composable";
 import gql from 'graphql-tag';
 import {GET_USER_BY_HIS_ID} from "../../utils/queries"
 import { useRouter } from 'vue-router';
 const router=useRouter()
-const authStore = useAuthStore();
 const onhover = ref(false);
 const isMobileMenuOpen = ref(false);
 
@@ -18,7 +16,6 @@ const hoverClick = () => {
   onhover.value = !onhover.value;
 };
 
-const userid = ref(authStore.userId);
 
 const { result: data, loading, error } = useQuery(GET_USER_BY_HIS_ID);
 
@@ -34,8 +31,7 @@ const clickLogout=()=>{
   console.log("the user clicked the logout button")
   localStorage.removeItem("token")
   localStorage.removeItem("userId")
-  authStore.setUserId(null);
-  authStore.setIsloggedin(false);
+  localStorage.removeItem("redirectAfterLogin")
   router.replace("/auth/login")
   
 }

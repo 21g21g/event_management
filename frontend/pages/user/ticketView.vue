@@ -4,12 +4,11 @@ definePageMeta({
     middleware:"auth-log"
 });
 
-import { useAuthStore } from "../../stores/authstore";
 import { GET_TICKET_USER_BY_USER_ID } from "../../utils/queries";
 import { useQuery } from "@vue/apollo-composable";
 import { onMounted, ref } from "vue";
 
-const userId = ref(localStorage.getItem("userId"));
+// const userId = ref(localStorage.getItem("userId"));
 const { result, error, loading,refetch } = useQuery(GET_TICKET_USER_BY_USER_ID);
 
 // Helper function to format date

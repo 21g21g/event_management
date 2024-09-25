@@ -8,7 +8,6 @@ import { useMutation } from '@vue/apollo-composable';
 import Eye from "../../assets/icons/Eye.vue";
 import { useRouter } from 'vue-router';
 import { getUserIdFromToken } from "../../utils/util";
-import { useAuthStore } from "../../stores/authstore";
 import { LOGIN_MUTATION } from "../../utils/queries";
 
 definePageMeta({
@@ -18,7 +17,6 @@ definePageMeta({
 const alertMessage = ref('');
 const alertVisible = ref(false);
 const alertType = ref('success');
-const authStore = useAuthStore();
 const router = useRouter();
 const user = ref({
   email: "",
@@ -72,7 +70,7 @@ const onSubmit = async () => {
 
       const redirectPath = localStorage.getItem('redirectAfterLogin');
       if (redirectPath) {
-        localStorage.removeItem('redirectAfterLogin');
+        // localStorage.removeItem('redirectAfterLogin');
         router.replace(redirectPath);
       } else {
         showAlert('You logged in successfully', 'success');
