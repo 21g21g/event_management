@@ -1,4 +1,11 @@
 type Mutation {
+  acceptPayment(
+    phoneNumber: String!
+    amount: String!
+  ): PayOutput!
+}
+
+type Mutation {
   siginUser(
     email: String!
     password: String!
@@ -73,5 +80,11 @@ type ImageUploadResponse {
 
 type ImageResponse {
   url: String!
+}
+
+type PayOutput {
+  message: String
+  checkoutUrl: String
+  tx_ref: String
 }
 

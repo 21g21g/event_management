@@ -1,4 +1,15 @@
 actions:
+  - name: acceptPayment
+    definition:
+      kind: synchronous
+      handler: http://backend:4000/payment
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: user
   - name: siginUser
     definition:
       kind: synchronous
@@ -50,4 +61,5 @@ custom_types:
     - name: Signoutput
     - name: ImageUploadResponse
     - name: ImageResponse
+    - name: PayOutput
   scalars: []
