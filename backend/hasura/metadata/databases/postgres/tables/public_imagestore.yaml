@@ -13,9 +13,9 @@ insert_permissions:
           user_id:
             _eq: X-Hasura-User-Id
       columns:
+        - url
         - event_id
         - id
-        - url
     comment: ""
 select_permissions:
   - role: anonymous
@@ -32,10 +32,7 @@ select_permissions:
         - url
         - event_id
         - id
-      filter:
-        event:
-          user_id:
-            _eq: X-Hasura-User-Id
+      filter: {}
     comment: ""
 update_permissions:
   - role: user

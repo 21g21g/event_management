@@ -9,7 +9,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useQuery } from "@vue/apollo-composable";
 const search=ref("")
 const limit=ref(6)
-const totalEvents = ref(0);
+// const totalEvents = ref(0);
 const filters = ref({
   price: {
     free: false,
@@ -24,9 +24,11 @@ const router=useRouter()
 watch([search,limit],()=>{
   const searchTerm=search.value.trim()===""?"%":`%${search.value}%`
  refetch({search:searchTerm,limit:limit.value})
-  if (result.value?.events_aggregate) {
-    totalEvents.value = result.value.events_aggregate.aggregate.count;
-    }
+
+
+})
+const total=computed(()=>{
+  return result.value?.events_aggregate.aggregate.count
 
 })
 
@@ -50,7 +52,7 @@ const viewMoreButton=()=>{
 
 }
 const canViewMore = computed(() => {
-  return limit.value < totalEvents.value;
+  return limit.value < total.value;
 });
 const handleClick=(id)=>{
   console.log(id)
@@ -58,9 +60,7 @@ const handleClick=(id)=>{
 }
 onMounted(() => {
  
-  if (result.value?.events_aggregate) {
-    totalEvents.value = result.value.events_aggregate.aggregate.count;
-  }
+
    refetch();
 });
 </script>

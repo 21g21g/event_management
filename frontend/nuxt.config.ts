@@ -38,8 +38,8 @@ export default defineNuxtConfig({
     },
    
   },
-  
-  // ssr:true,
+  //allowing your app to render pages on the server before sending them to the client for seo.
+ ssr:false,
   // runtimeConfig:{
   //   public:{
   //     hasuraAdminSecret:process.env.HASURA_ADMIN_SECRET

@@ -4,7 +4,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import Heart from '../../assets/icons/Heart.vue';
-import { GET_EVENT_BY_ID, USER_MAKE_BOOK_MARK, GET_BOOK_MARKED_EVENT, CATCH_TICKET, GET_TICKET_USER } from '../../utils/queries';
+import { GET_EVENT_BY_ID, USER_MAKE_BOOK_MARK, GET_BOOK_MARKED_EVENT, CATCH_TICKET, GET_TICKET_USER ,ACCEPT_TRANSACTION,INSERT_TRANSACTION} from '../../utils/queries';
 import AlertMessage from '../../components/AlertMessage.vue';
 import Map from "../../components/homecomponents/Map.vue";
 
@@ -17,8 +17,10 @@ const router = useRouter();
 const id = ref(route.params.id);
 console.log(id)
 const isBookmarked = ref(false);
+const showReservefor=ref(false)
+const phoneNumber=ref("")
+const amount=ref("")
 const isTicket = ref(false);
-// const user_id = ref(localStorage.getItem("userId"));
 const alertMessage = ref('');
 const alertVisible = ref(false);
 const alertType = ref('success');
@@ -28,6 +30,8 @@ const { result, loading, error, refetch } = useQuery(GET_EVENT_BY_ID, {
 
 const { mutate: bookMark } = useMutation(USER_MAKE_BOOK_MARK);
 const { mutate: ticket } = useMutation(CATCH_TICKET);
+const {mutate:accepttransaction}=useMutation(ACCEPT_TRANSACTION)
+const {mutate:insertTransaction}=useMutation(INSERT_TRANSACTION)
 
 const count = ref(1);
 const increaseCount = () => count.value += 1;
@@ -36,8 +40,11 @@ const decreaseCount = () => {
     count.value -= 1;
   }
 };
+// const showReserveform=()=>{
+//   showReservefor.value=true
 
-const totalPrice = computed(() => {
+// }
+const totalPrice=computed(() => {
   if (eventData.value?.price === 'paid') {
     return (parseFloat(eventData.value.specific_price) * count.value).toFixed(2);
   }
@@ -56,6 +63,11 @@ const showAlert = (message, type = 'success') => {
 const { result: ticketResult, loading: ticketLoading, error: ticketError, refetch: ticketRefetch } = useQuery(GET_TICKET_USER, { event_id: String(id.value) });
 
 const reserveTicket = async () => {
+ 
+  showReservefor.value=true
+
+};
+const makePayment = async () => {
   if (!localStorage.getItem('token')) {
     localStorage.setItem('redirectAfterLogin', window.location.pathname);
     showAlert("First you must be logged in!", "info");
@@ -64,31 +76,65 @@ const reserveTicket = async () => {
     }, 4000);
     return;
   }
-  if (isTicket.value === false) {
-    try {
-      await ticket({
-        // user_id: String(user_id.value),
-        event_id: String(id.value),
-        quantity: count.value,
-        catchedTicket: true
-      });
-      showAlert(`You reserved ${count.value} tickets.`, 'success');
-      localStorage.setItem('recentlyTicketed', 'true');
-      setTimeout(() => {
-        router.push("/user/ticketView");
-      }, 4000);
-    } catch (error) {
-      console.log('Unexpected error:', error);
-      showAlert('Something went wrong while catching the ticket.', 'error');
-    }
-  } else {
-    showAlert('You have already caught a ticket for this event!', 'success');
-    setTimeout(() => {
-      router.push('/user/ticketView');
-    }, 4000);
-  }
-};
 
+  try {
+    const response = await accepttransaction({
+      amount: amount.value,
+      phoneNumber: phoneNumber.value,
+    });
+    console.log('Payment response:', response);
+
+    // Check if response has data
+    if (response && response.data) {
+      const { data } = response;
+
+      if (data.acceptPayment && data.acceptPayment.checkoutUrl) {
+        // Redirect to the checkout URL for payment
+        window.location.href = data.acceptPayment.checkoutUrl;
+
+        // Insert ticket information after successful payment
+        if (isTicket.value === false) {
+          try {
+            const ticketResponse = await insertTransaction({
+              event_id: String(id.value),
+              quantity: count.value,
+              amount: amount.value,
+              phoneNumber: phoneNumber.value,
+              checkout_url: data.acceptPayment.checkoutUrl,
+              catchedTicket: true
+            });
+
+            // Check if ticket insertion was successful
+            if (ticketResponse && ticketResponse.data) {
+              showAlert(`You reserved ${count.value} tickets.`, 'success');
+              localStorage.setItem('recentlyTicketed', 'true');
+              setTimeout(() => {
+                router.push("/user/ticketView");
+              }, 4000);
+            } else {
+              showAlert('Failed to insert ticket information.', 'error');
+            }
+          } catch (error) {
+            console.log('Error while inserting ticket:', error);
+            showAlert('Something went wrong while catching the ticket.', 'error');
+          }
+        } else {
+          showAlert('You have already caught a ticket for this event!', 'success');
+          setTimeout(() => {
+            router.push('/user/ticketView');
+          }, 4000);
+        }
+      } else {
+        alert('Payment failed or checkout URL is missing.');
+      }
+    } else {
+      alert('No response data received.');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred during the payment process.');
+  }
+}
 const { result: bookmarkResult, loading: bookmarkLoading, error: bookmarkError, refetch: bookRefetch } = useQuery(GET_BOOK_MARKED_EVENT, { event_id: String(id.value) });
 const toggleBookmark = async () => {
   if (!localStorage.getItem('token')) {
@@ -128,7 +174,12 @@ const eventData = computed(() => {
   if (error.value) return { error: true };
   return result.value?.events_by_pk || {};
 });
-
+onMounted(() => {
+  amount.value = totalPrice.value; 
+});
+watch(totalPrice, (newPrice) => {
+  amount.value = newPrice; 
+});
 onMounted(async () => {
   await bookRefetch();
   if (!bookmarkLoading.value && bookmarkResult?.value) {
@@ -160,9 +211,9 @@ onMounted(async () => {
         <AlertMessage :message="alertMessage" :type="alertType" :visible="alertVisible" />
 
         <div class="relative">
-       <v-carousel v-if="eventData?.imagestores && eventData.imagestores.length > 0" :items-to-show="1" class="rounded-lg">
+       <v-carousel v-if="eventData?.imagestores && eventData?.imagestores.length > 0" :items-to-show="1" class="rounded-lg">
      <v-carousel-item
-      v-for="(item, i) in eventData.imagestores"
+      v-for="(item, i) in eventData?.imagestores"
        :key="i"
          class="flex items-center justify-center"
       >
@@ -215,16 +266,53 @@ onMounted(async () => {
             <p class="text-lg font-bold">Total Price: ${{ totalPrice }}</p>
           </div>
 
-          <button
+          <!-- <button
             @click="reserveTicket"
             :class="isTicket ? 'bg-green-500' : 'bg-blue-500'"
             class="w-full text-white py-3 rounded-lg transition-transform hover:scale-105"
-          >
-            <span v-if="isTicket">Ticket Reserved</span>
+          > -->
+            <button @click="reserveTicket" class="w-full mt-4 bg-indigo-500 text-white py-3 rounded-lg transition-transform hover:scale-105">
+             <span v-if="isTicket">Ticket Reserved</span>
             <span v-else>Reserve Ticket</span>
           </button>
+           
+          <!-- </button>
+          <button @click="showReserveform" class="w-full mt-4 bg-indigo-500 text-white py-3 rounded-lg transition-transform hover:scale-105">
+            Pay Now
+          </button> -->
+            <div v-if="showReservefor" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-orange-100 rounded-lg shadow-xl p-6 w-1/3 ">
+            <h3 class="text-lg font-semibold mb-4 text-center">Complete Your Payment</h3>
+            <div class="flex flex-col gap-4">
+              <input
+                v-model="phoneNumber"
+                type="text"
+                placeholder="Enter Phone Number"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300"
+              />
+              <input
+                v-model="amount"
+                type="text"
+                placeholder="Enter Amount"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300"
+              />
+              <button
+                class="bg-green-500 text-white w-full py-3 rounded-lg transition-transform hover:scale-105 mt-4"
+                @click="makePayment"
+              >
+                Pay
+              </button>
+            </div>
+            <button
+              @click="showReservefor = false"
+              class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
-
+        
         <!-- Map Section -->
         <div class="bg-white shadow-lg rounded-lg p-6">
           <h2 class="text-xl font-semibold mb-4">Event Location</h2>

@@ -8,19 +8,23 @@ const router = useRouter();
 const search = ref('');
 const limit = ref(6);
 const offset = ref(0); 
-const totalEvents = ref(0); 
-const errorMsg = ref('');  // Error message to handle any API error
-
-const { result, loading, error, refetch } = useQuery(GET_ALL_EVENTS, {
+const { result, loading, error, refetch } = useQuery(GET_ALL_EVENTS,{
   search: "%", 
   limit: limit.value,
   offset: offset.value,
 });
+const totalEventCount=computed(()=>{
+  return result.value?.events_aggregate.aggregate.count||0
+
+})
+
 
 const eventData = computed(() => {
   return result.value?.events || [];
+ 
+  
 });
-console.log(eventData)
+console.log(result.value?.events)
 
 watch([search, limit], async() => {
   offset.value = 0; 
@@ -31,25 +35,18 @@ const fetchEvents =  () => {
   try {
     let searchQuery = search.value.trim() === "" ? "%" : `%${search.value}%`;
     const { data } =  refetch({ search: searchQuery, limit: limit.value, offset: offset.value });
-    
-    if (data && data.events) {
-      totalEvents.value = data.events.length;
-      errorMsg.value = ''; // Reset error message on successful fetch
-    } else {
-      throw new Error('Failed to fetch events data');
-    }
+  
   } catch (err) {
     console.error('Error fetching events:', err);
-    errorMsg.value = 'Error fetching events. Please try again later.';
   }
 };
 
-const filteredData = computed(() => {
+const filteredData = computed(() =>{
   return eventData.value;
 });
 
 const canShowMore = computed(() => {
-  return totalEvents.value === limit.value && !loading.value;
+  return (offset.value + limit.value) < totalEventCount.value && !loading.value;
 });
 
 const canShowLess = computed(() => {
@@ -70,7 +67,6 @@ const showLess = async () => {
   }
 };
 
-// Navigate to event detail page
 const detailPage = (id) => {
   router.push(`/event/${id}`);
 };
@@ -126,7 +122,8 @@ onMounted(async () => {
       <div class="text-center flex flex-row gap-3 mt-6">
         <button 
           class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors duration-300 mx-auto disabled:bg-gray-400 disabled:cursor-not-allowed"
-          :disabled="!canShowMore"
+          :disabled="filteredData.length === 0 ||!canShowMore"
+          
           @click="showMore"
         >
           See More
@@ -134,7 +131,7 @@ onMounted(async () => {
         
         <button 
           class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors duration-300 mx-auto disabled:bg-gray-400 disabled:cursor-not-allowed"
-          :disabled="!canShowLess"
+          :disabled="filteredData.length === 0 ||!canShowLess "
           @click="showLess"
         >
           See Less

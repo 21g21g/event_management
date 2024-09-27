@@ -180,27 +180,6 @@ query{
    
     }
   }`;
-// export const GET_USER_BY_HIS_ID=gql`
-// query userbyId($id:uuid!){
-//   users_by_pk(id:$id){
-//     username
-//     events{
-//       id
-//       title
-//       description
-//       address
-//       venue
-//       price
-//       specific_price
-//       preparation_date
-//       category
-//       tags
-//       featured_image
-//     }
-//   }
-  
-// }`;
-
 
 export const DELETE_EVENT_BY_ID=gql`
 mutation DeleteEvent($id: uuid!) {
@@ -245,7 +224,6 @@ mutation Event(
 `;
 
 export const GET_ALL_EVENTS=gql`
-
 query getEvent($search:String!,$limit:Int!,$offset:Int!){
   events(where:{_or:[
     {title:{_ilike:$search}},
@@ -270,6 +248,13 @@ query getEvent($search:String!,$limit:Int!,$offset:Int!){
     preparation_date
     tags
   }
+  events_aggregate {
+    aggregate {
+      count
+    }
+  }
+  
+  
 }
 `;
 
@@ -348,29 +333,6 @@ mutation bookMark($event_id: uuid!,$isbookMarked:Boolean!) {
 
 `;
 
-// export const GET_BOOK_MARK_BY_USER_ID=gql`
-// query{
-//   bookmarks{
-//     id
-//     isbookMarked
-//     event{
-//         id
-//       title
-//       description
-//       address
-//       venue
-//       specific_price
-//       tags
-//       category
-//       featured_image
-//       price
-//       preparation_date
-//     }
-//   }
-// }
-// `;
-
-//this query is inorder to get bookmark by user_id.
 export const GET_BOOK_MARK_BY_USER_ID=gql`
 query{
   bookmarks{
@@ -392,10 +354,9 @@ query{
     }
   }
 }`;
-
 //this is inorder to make search functionality from the backend.
 export const SEARCH_TERMS=gql`
-query searchItems($search: String, $category: String!, $limit: Int) {
+  query searchItems($search: String, $category: String!, $limit: Int) {
   events_aggregate(where: {
     _and: [
       { category: { _eq: $category } },
@@ -465,20 +426,6 @@ mutation insertTicket($event_id:uuid!,$quantity:Int!,$catchedTicket:Boolean!){
 }
 `;
 
-// export const GET_TICKET_USER=gql`
-// query{
-//   tickets{
-//     catchedTicket
-//     quantity
-//     id
-//     event{
-//       title
-//       preparation_date
-//     }
-//   }
-// }`;
-
-
 // this query is inorder to get single ticket that a user created in a single event.
 export const GET_TICKET_USER=gql`
 query getTicket($event_id:uuid!){
@@ -531,4 +478,24 @@ mutation deleteBookmark($id: uuid!) {
 }
 
 
+`;
+
+export const INSERT_TRANSACTION=gql`
+mutation insertTransaction($amount: String!, $phoneNumber: String!, $checkout_url: String, $tx_rf: String, $event_id: String!) {
+  insert_transactions(objects: {amount: $amount, checkout_url: $checkout_url, event_id: $event_id, phoneNumber: $phoneNumber, tx_rf: $phoneNumber}){
+    returning{
+      id
+    }
+  }
+}
+`;
+
+export const ACCEPT_TRANSACTION=gql`
+mutation acceptTransaction($amount:String!,$phoneNumber:String!){
+  acceptPayment(amount:$amount,phoneNumber:$phoneNumber){
+    message
+    checkoutUrl
+    tx_ref
+  }
+}
 `;

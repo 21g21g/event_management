@@ -63,7 +63,6 @@ func PaymentsHandler(w http.ResponseWriter, r *http.Request) {
 	method := "POST"
 
 	// Prepare payload with dynamic tx_ref and user inputs
-	const returnURL = "http://localhost:3000/user"
 	payload := map[string]string{
 		"amount":                     payment.Input.Amount,
 		"currency":                   "ETB",
@@ -73,7 +72,7 @@ func PaymentsHandler(w http.ResponseWriter, r *http.Request) {
 		"phone_number":               payment.Input.PhoneNumber,
 		"tx_ref":                     txRef, // Use the dynamic tx_ref
 		"callback_url":               "https://webhook.site/077164d6-29cb-40df-ba29-8a00e59a7e60",
-		"return_url":                 returnURL,
+		"return_url":                 "http://localhost:3000/successfulpay",
 		"customization[title]":       "Payment for my favourite merchant",
 		"customization[description]": "I love online payments",
 		"meta[hide_receipt]":         "true",
