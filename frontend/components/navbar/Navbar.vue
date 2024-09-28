@@ -12,13 +12,13 @@ const closeMenu=()=>{
 
 <style scoped>
 .router-link-exact-active {
-  color: blueviolet !important;
+  color: orange !important;
 }
 </style>
 <template>
-  <nav class="bg-white shadow-lg p-4">
+  <nav class="bg-slate-700 shadow-lg p-4">
     <div class="container mx-auto flex items-center justify-between">
-      <NuxtLink to="/" exact class="text-2xl font-bold text-blue-600 hover:text-blue-800 transition duration-300">
+      <NuxtLink to="/" exact class="text-2xl font-bold text-white hover:bg-black transition duration-300">
         MinabEvent
       </NuxtLink>
       <div class="flex items-center space-x-4 ">
@@ -26,14 +26,14 @@ const closeMenu=()=>{
            <NuxtLink 
           to="/auth/login" 
           exact 
-          class="text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-300"
+          class="text-white px-4 py-2 rounded-lg hover:bg-black  transition duration-300"
         >
           Login
         </NuxtLink>
         <NuxtLink 
           to="/auth/signup" 
           exact 
-          class="text-blue-600 hover:bg-blue-100  px-4 py-2 rounded-lg transition duration-300"
+          class="text-white hover:bg-black   px-4 py-2 rounded-lg transition duration-300"
         >
           Signup
         </NuxtLink>
@@ -41,7 +41,7 @@ const closeMenu=()=>{
        
         <button 
           @click="toggleMenu"
-          class="md:hidden sm:block text-blue-600 hover:text-blue-800 transition duration-300 focus:outline-none"
+          class="md:hidden sm:block text-white hover:text-blue-800 transition duration-300 focus:outline-none"
         >
           <svg 
             class="w-6 h-6" 
@@ -67,7 +67,7 @@ const closeMenu=()=>{
       <NuxtLink 
         to="/auth/login" 
         exact 
-        class="block px-4 py-2 text-blue-600 hover:bg-blue-100"
+        class="block px-4 py-2 text-white hover:bg-blue-100"
          @click="closeMenu"
 
       >
@@ -76,7 +76,7 @@ const closeMenu=()=>{
       <NuxtLink 
         to="/auth/signup" 
         exact 
-        class="block px-4 py-2 text-blue-600 hover:bg-blue-100"
+        class="block px-4 py-2 text-white hover:bg-blue-100"
       @click="closeMenu"
 
       >

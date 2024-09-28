@@ -42,12 +42,12 @@ import { useRouter } from "vue-router";
       </div>
 
       <!-- Footer Bottom: Copyright and Legal Links -->
-      <div class="flex flex-col md:flex-row justify-between items-center mt-8">
+      <!-- <div class="flex flex-col md:flex-row justify-between items-center mt-8">
         <div class="flex space-x-4">
           <NuxtLink to="/terms" class="text-gray-400 hover:text-white">Terms of Service</NuxtLink>
           <NuxtLink to="/privacy" class="text-gray-400 hover:text-white">Privacy Policy</NuxtLink>
         </div>
-      </div>
+      </div> -->
     </div>
   </footer>
 </template>

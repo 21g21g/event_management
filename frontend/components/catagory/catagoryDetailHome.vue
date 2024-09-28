@@ -64,33 +64,43 @@ onMounted(() => {
    refetch();
 });
 </script>
+<style>
+  .input-border {
+    border: 1px solid orange; 
+    border-radius: 2px; 
+  }
 
+  .input-border:focus {
+    border-color: blue; 
+    outline: none; 
+  }
+</style>
 <template>
   <div class="flex flex-col md:flex-row p-4 gap-6">
-    <div class="flex flex-col bg-white shadow-md p-4 rounded-lg w-full md:w-1/4">
-      <h1 class="text-2xl font-bold mb-4">Filters</h1>
+    <div class="flex flex-col bg-slate-600 shadow-md p-4 rounded-lg w-full md:w-1/4">
+      <h1 class="text-2xl font-bold mb-4 text-white">Filters</h1>
       <div class="flex flex-col mb-4">
   <div class="flex flex-row items-center mb-2">
-    <label for="title" class="cursor-pointer">Search</label>
-    <input
-      type="text"
-      v-model="search"
-      id="title"
-      class="mr-2 w-40 border border-gray-300 rounded p-2 focus:border-blue-500 focus:outline-none"
-    />
+    <label for="title" class="cursor-pointer text-white">Search</label>
+   <input
+  type="text"
+  v-model="search"
+  id="title"
+  class="input-border  mr-2 w-40 rounded text-white p-2"
+/>
   </div>
   
 </div>
       <div class="flex flex-col">
-        <p class="text-lg font-semibold mb-2">Price</p>
+        <p class="text-lg font-semibold text-white mb-2">Price</p>
       
          <div class="flex flex-row items-center mb-2">
         <input type="checkbox" id="free" v-model="filters.price.free" class="mr-2" />
-        <label for="free" class="cursor-pointer">Free</label>
+        <label for="free" class="cursor-pointer text-white">Free</label>
       </div>
       <div class="flex flex-row items-center">
         <input type="checkbox" id="paid" v-model="filters.price.paid" class="mr-2" />
-        <label for="paid" class="cursor-pointer">Paid</label>
+        <label for="paid" class="cursor-pointer text-white">Paid</label>
       </div>
       </div>
     </div>

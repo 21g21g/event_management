@@ -32,10 +32,12 @@ export default defineNuxtConfig({
   
     server:{
         hmr:true,
+        
       
         
         
     },
+
    
   },
   //allowing your app to render pages on the server before sending them to the client for seo.

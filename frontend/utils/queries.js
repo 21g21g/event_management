@@ -164,6 +164,7 @@ export const GET_USER_BY_HIS_ID=gql`
 query{
   users{
     username
+    image
     events{
       id
       title
@@ -499,3 +500,27 @@ mutation acceptTransaction($amount:String!,$phoneNumber:String!){
   }
 }
 `;
+
+export const GET_USER_FOR_UPLOAD_PROFILE=gql`
+query{
+  users{
+    username
+    image
+    email
+  }
+
+    
+  
+}
+`;
+
+export const UPLOAD_PROFILE=gql`
+mutation updateProfile($id:uuid!,$username:String,$email:String,$image:String){
+  update_users(where:{id:{_eq:$id}},_set:{username:$username,email:$email,image:$image}){
+    returning{
+      id
+    }
+  }
+  
+}
+`

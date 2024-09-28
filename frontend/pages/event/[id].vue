@@ -4,7 +4,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import Heart from '../../assets/icons/Heart.vue';
-import { GET_EVENT_BY_ID, USER_MAKE_BOOK_MARK, GET_BOOK_MARKED_EVENT, CATCH_TICKET, GET_TICKET_USER ,ACCEPT_TRANSACTION,INSERT_TRANSACTION} from '../../utils/queries';
+import { GET_EVENT_BY_ID, USER_MAKE_BOOK_MARK, GET_BOOK_MARKED_EVENT, CATCH_TICKET, GET_TICKET_USER ,ACCEPT_TRANSACTION} from '../../utils/queries';
 import AlertMessage from '../../components/AlertMessage.vue';
 import Map from "../../components/homecomponents/Map.vue";
 
@@ -27,11 +27,10 @@ const alertType = ref('success');
 const { result, loading, error, refetch } = useQuery(GET_EVENT_BY_ID, {
   id: String(id.value),
 });
-
 const { mutate: bookMark } = useMutation(USER_MAKE_BOOK_MARK);
 const { mutate: ticket } = useMutation(CATCH_TICKET);
 const {mutate:accepttransaction}=useMutation(ACCEPT_TRANSACTION)
-const {mutate:insertTransaction}=useMutation(INSERT_TRANSACTION)
+// const {mutate:insertTransaction}=useMutation(INSERT_TRANSACTION)
 
 const count = ref(1);
 const increaseCount = () => count.value += 1;
@@ -63,11 +62,11 @@ const showAlert = (message, type = 'success') => {
 const { result: ticketResult, loading: ticketLoading, error: ticketError, refetch: ticketRefetch } = useQuery(GET_TICKET_USER, { event_id: String(id.value) });
 
 const reserveTicket = async () => {
- 
   showReservefor.value=true
 
 };
 const makePayment = async () => {
+  // Check if the user is logged in
   if (!localStorage.getItem('token')) {
     localStorage.setItem('redirectAfterLogin', window.location.pathname);
     showAlert("First you must be logged in!", "info");
@@ -78,52 +77,28 @@ const makePayment = async () => {
   }
 
   try {
+    // Call the payment function (accepttransaction)
     const response = await accepttransaction({
       amount: amount.value,
       phoneNumber: phoneNumber.value,
     });
+
     console.log('Payment response:', response);
 
-    // Check if response has data
+    // Check if the response has valid data and checkout URL
     if (response && response.data) {
       const { data } = response;
 
       if (data.acceptPayment && data.acceptPayment.checkoutUrl) {
-        // Redirect to the checkout URL for payment
+        // Save payment details in localStorage before redirecting for payment
+        localStorage.setItem('paymentDetails', JSON.stringify({
+          amount: amount.value,
+          phoneNumber: phoneNumber.value,
+          checkoutUrl: data.acceptPayment.checkoutUrl,
+        }));
+
+        // Redirect user to the checkout URL for payment
         window.location.href = data.acceptPayment.checkoutUrl;
-
-        // Insert ticket information after successful payment
-        if (isTicket.value === false) {
-          try {
-            const ticketResponse = await insertTransaction({
-              event_id: String(id.value),
-              quantity: count.value,
-              amount: amount.value,
-              phoneNumber: phoneNumber.value,
-              checkout_url: data.acceptPayment.checkoutUrl,
-              catchedTicket: true
-            });
-
-            // Check if ticket insertion was successful
-            if (ticketResponse && ticketResponse.data) {
-              showAlert(`You reserved ${count.value} tickets.`, 'success');
-              localStorage.setItem('recentlyTicketed', 'true');
-              setTimeout(() => {
-                router.push("/user/ticketView");
-              }, 4000);
-            } else {
-              showAlert('Failed to insert ticket information.', 'error');
-            }
-          } catch (error) {
-            console.log('Error while inserting ticket:', error);
-            showAlert('Something went wrong while catching the ticket.', 'error');
-          }
-        } else {
-          showAlert('You have already caught a ticket for this event!', 'success');
-          setTimeout(() => {
-            router.push('/user/ticketView');
-          }, 4000);
-        }
       } else {
         alert('Payment failed or checkout URL is missing.');
       }
@@ -135,6 +110,59 @@ const makePayment = async () => {
     alert('An error occurred during the payment process.');
   }
 }
+
+// Function to handle successful payment and reserve tickets
+const handlePaymentSuccess = async () => {
+  // Retrieve payment details from localStorage
+  const paymentDetails = JSON.parse(localStorage.getItem('paymentDetails'));
+
+  if (!paymentDetails) {
+    showAlert("No payment details found. Please try again.", "error");
+    return;
+  }
+
+  try {
+    // Check if the user hasn't already reserved the ticket
+    if (isTicket.value === false) {
+      // Call the ticket reservation function after successful payment
+      const ticketResponse = await ticket({
+        event_id: String(id.value),
+        quantity: count.value,
+        amount: paymentDetails.amount,
+        phoneNumber: paymentDetails.phoneNumber,
+        checkout_url: paymentDetails.checkoutUrl,
+        catchedTicket: true
+      });
+
+      // Check if ticket reservation was successful
+      if (ticketResponse && ticketResponse.data) {
+        showAlert(`You reserved ${count.value} tickets.`, 'success');
+        localStorage.setItem('recentlyTicketed', 'true');
+
+        // Redirect user to ticket view after 4 seconds
+        setTimeout(() => {
+          router.push("/user/ticketView");
+        }, 4000);
+      } else {
+        showAlert('Failed to insert ticket information.', 'error');
+      }
+    } else {
+      // If the user already reserved a ticket
+      showAlert('You have already reserved a ticket for this event!', 'success');
+      setTimeout(() => {
+        router.push('/user/ticketView');
+      }, 4000);
+    }
+  } catch (error) {
+    console.log('Error while inserting ticket:', error);
+    showAlert('Something went wrong while reserving the ticket.', 'error');
+  }
+};
+
+// Define a route for the payment success page
+// router.push('/successfullpay', (req, res) => {
+//   handlePaymentSuccess();
+// });
 const { result: bookmarkResult, loading: bookmarkLoading, error: bookmarkError, refetch: bookRefetch } = useQuery(GET_BOOK_MARKED_EVENT, { event_id: String(id.value) });
 const toggleBookmark = async () => {
   if (!localStorage.getItem('token')) {

@@ -14,7 +14,7 @@ const router = useRouter()
 
 </style>
 <template>
-  <div class="relative md:w-64 min-h-screen bg-gray-800 mt-16 text-white shadow-lg rounded-lg p-4">
+  <div class="relative md:w-64 min-h-screen bg-slate-700  mt-16 text-white shadow-lg rounded-lg p-4">
     <div class="flex flex-col space-y-6">
       <NuxtLink 
         exact
