@@ -4,12 +4,12 @@ definePageMeta({
     middleware:"auth-log"
 });
 
-import { GET_TICKET_USER_BY_USER_ID } from "../../utils/queries";
+import { GET_TICKET_USER_BY_USER_ID,GET_TRANSACTIONS } from "../../utils/queries";
 import { useQuery } from "@vue/apollo-composable";
 import { onMounted, ref } from "vue";
 
 // const userId = ref(localStorage.getItem("userId"));
-const { result, error, loading,refetch } = useQuery(GET_TICKET_USER_BY_USER_ID);
+const { result, error, loading,refetch } = useQuery(GET_TRANSACTIONS);
 
 // Helper function to format date
 const formatDate = (dateStr) => {
@@ -31,31 +31,34 @@ onMounted(()=>{
     
     <div v-else-if="error" class="text-center text-red-500">There is an error fetching your tickets.</div>
     
-    <div v-else-if="result?.tickets.length === 0" class="text-center text-red-600">No tickets found.</div>
+    <div v-else-if="result?.transactions.length === 0" class="text-center text-red-600">No tickets found.</div>
 
     <div v-else>
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead class="bg-gradient-to-r from-gray-100 to-gray-300">
             <tr>
-              <th class="px-6 py-3 text-left text-gray-700 font-bold uppercase tracking-wider border-b">ID</th>
-              <th class="px-6 py-3 text-left text-gray-700 font-bold uppercase tracking-wider border-b">Title</th>
+              <th class="px-6 py-3 text-left text-gray-700 font-bold uppercase tracking-wider border-b">checkout_url</th>
+              <th class="px-6 py-3 text-left text-gray-700 font-bold uppercase tracking-wider border-b">Amount</th>
               <th class="px-6 py-3 text-left text-gray-700 font-bold uppercase tracking-wider border-b">Event Date</th>
-              <th class="px-6 py-3 text-left text-gray-700 font-bold uppercase tracking-wider border-b">Quantity</th>
+              <th class="px-6 py-3 text-left text-gray-700 font-bold uppercase tracking-wider border-b">PhoneNumber</th>
             </tr>
           </thead>
 
           <tbody>
             <tr
-              v-for="(ticket, index) in result?.tickets"
+              v-for="(ticket, index) in result?.transactions"
               :key="ticket.id"
               :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'" 
               class="hover:bg-gray-200 transition duration-300 ease-in-out"
             >
-              <td class="px-6 py-4 border-b text-gray-800">{{ ticket?.id }}</td>
-              <td class="px-6 py-4 border-b text-gray-800">{{ ticket?.event.title }}</td>
+<td class="px-6 py-4 border-b text-gray-800">
+  <a :href="ticket?.checkout_url" target="_blank" class="text-blue-500 hover:underline">
+    {{ ticket?.checkout_url }}
+  </a>
+</td>              <td class="px-6 py-4 border-b text-gray-800">{{ ticket?.amount }}</td>
               <td class="px-6 py-4 border-b text-gray-800">{{ formatDate(ticket?.event.preparation_date) }}</td>
-              <td class="px-6 py-4 border-b text-gray-800">{{ ticket?.quantity }}</td>
+              <td class="px-6 py-4 border-b text-gray-800">{{ ticket?.phoneNumber }}</td>
             </tr>
           </tbody>
         </table>

@@ -419,8 +419,8 @@ query getBookmark($event_id:uuid!){
 
 // this query is inorder to catch ticket.
 export const CATCH_TICKET=gql`
-mutation insertTicket($event_id:uuid!,$quantity:Int!,$catchedTicket:Boolean!){
-  insert_tickets_one(object:{event_id:$event_id,quantity:$quantity,catchedTicket:$catchedTicket}){
+mutation insertTicket($event_id:uuid!,$quantity:Int!,$amount:String,$phoneNumber:String,$checkout_url:String,$catchedTicket:Boolean!){
+  insert_tickets_one(object:{event_id:$event_id,quantity:$quantity,amount:$amount,phoneNumber:$phoneNumber,checkout_url:$checkout_url,catchedTicket:$catchedTicket}){
      id
   
   }
@@ -524,3 +524,31 @@ mutation updateProfile($id:uuid!,$username:String,$email:String,$image:String){
   
 }
 `
+
+export const TRANZATION_INSERT=gql`
+mutation insertTransaction($event_id: uuid!, $amount: String, $phoneNumber: String, $checkout_url: String) {
+  insert_transactions(objects: {amount: $amount,event_id:$event_id,phoneNumber:$phoneNumber,checkout_url:$checkout_url}){
+    returning{
+      id
+    }
+  }
+}
+
+`;
+export const GET_TRANSACTIONS=gql`
+query{
+  transactions{
+    id
+    amount
+    checkout_url
+    phoneNumber
+    event{
+      preparation_date
+      
+    }
+    user{
+      username
+    }
+  }
+}
+`;

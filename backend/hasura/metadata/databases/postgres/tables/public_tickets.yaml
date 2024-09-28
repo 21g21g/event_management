@@ -17,22 +17,27 @@ insert_permissions:
       set:
         user_id: x-hasura-user-id
       columns:
+        - amount
         - catchedTicket
-        - quantity
+        - checkout_url
         - created_at
         - event_id
         - id
-        - user_id
+        - phoneNumber
+        - quantity
     comment: ""
 select_permissions:
   - role: user
     permission:
       columns:
+        - amount
         - catchedTicket
-        - quantity
+        - checkout_url
         - created_at
         - event_id
         - id
+        - phoneNumber
+        - quantity
         - user_id
       filter:
         user_id:
